@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
+// This is a test commit to make sure git is working.
 public class MainActivity extends ActionBarActivity {
 
     @Override
