@@ -2,57 +2,35 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/emailLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/emailLabel"
-        android:layout_alignParentLeft="true"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_alignBaseline="@+id/email_address"/>
+              android:layout_height="match_parent"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/activity_vertical_margin"
+              android:paddingBottom="@dimen/activity_vertical_margin">
     <EditText
         android:id="@+id/email_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:layout_toRightOf="@+id/emailLabel"
-        android:layout_toEndOf="@+id/emailLabel"/>
-    <TextView
-        android:id="@+id/passwordOneLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/passwordOneLabel"
-        android:layout_alignParentLeft="true"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_alignBaseline="@+id/passwordOne"/>
+        android:hint="@string/email_hint"
+        android:ems="10"/>
     <EditText
         android:id="@+id/passwordOne"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:layout_below="@+id/email_address"
-        android:layout_toRightOf="@+id/passwordOneLabel"
-        android:layout_toEndOf="@+id/passwordOneLabel"/>
-    <TextView
-        android:id="@+id/passwordTwoLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/passwordTwoLabel"
-        android:layout_alignParentLeft="true"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_alignBaseline="@+id/passwordTwo"/>
+        android:layout_gravity="center_horizontal"
+        android:hint="@string/password_hint"
+        android:ems="10"/>
     <EditText
         android:id="@+id/passwordTwo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:layout_below="@+id/passwordOne"
-        android:layout_toRightOf="@+id/passwordTwoLabel"
-        android:layout_toEndOf="@+id/passwordTwoLabel"/>
+        android:hint="@string/password_again_hint"
+        android:ems="10"/>
     <Button
         android:id="@+id/registerButton"
         android:layout_width="wrap_content"
