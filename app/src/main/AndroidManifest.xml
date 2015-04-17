@@ -21,6 +21,10 @@
             android:label="@string/app_name" >
         </activity>
         <activity
+            android:name=".TermsOfUse"
+            android:label="TermsOfUse" >
+            </activity>
+        <activity
             android:name=".UserAccount"
             android:label="@string/title_activity_user_account" >
         </activity>

@@ -19,10 +19,11 @@ public class MainActivity extends ActionBarActivity {
         register = (Button) findViewById(R.id.Register);
         login = (Button) findViewById(R.id.Login);
 
+
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), RegisterUser.class);
+                Intent i = new Intent(v.getContext(), TermsOfUse.class);
                 startActivity(i);
             }
         });
