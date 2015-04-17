@@ -11,17 +11,25 @@ import android.widget.Button;
 // This is a test commit to make sure git is working.
 public class MainActivity extends ActionBarActivity {
     private Button register;
-
+    private Button login;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         register = (Button) findViewById(R.id.Register);
+        login = (Button) findViewById(R.id.Login);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(v.getContext(), RegisterUser.class);
+                startActivity(i);
+            }
+        });
+
+        login.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), UserAccount.class);
                 startActivity(i);
             }
         });
