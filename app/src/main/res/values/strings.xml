@@ -10,6 +10,8 @@
     <string name="passwordTwoLabel">Enter password again</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_user_account">UserAccount</string>
+    <string name="accept">accept</string>
+    <string name="decline">decline</string>
     <string name="terms_of_use">Terms and Conditions (Template)
 
 
