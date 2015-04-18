@@ -48,6 +48,22 @@
         android:layout_below="@+id/passwordOne"
         android:hint="@string/password_again_hint"
         android:ems="10"/>
+    <TextView
+        android:id="@+id/securityQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="What is your Mother's maiden name?"
+        android:layout_below="@+id/passwordTwo"
+        />
+    <EditText
+        android:id="@+id/securityAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/securityQuestion"
+        android:hint="Answer"
+        android:ems="10"
+        />
     <Button
         android:id="@+id/registerButton"
         android:layout_width="wrap_content"

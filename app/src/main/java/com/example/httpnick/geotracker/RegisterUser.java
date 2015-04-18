@@ -16,7 +16,7 @@ import android.widget.EditText;
 
 public class RegisterUser extends Activity {
     private Button regButton;
-    private EditText email, passwordOne, passwordTwo;
+    private EditText email, passwordOne, passwordTwo, secAnswer;
     SharedPreferences prefs;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,6 +27,7 @@ public class RegisterUser extends Activity {
         email = (EditText) findViewById(R.id.email_address);
         passwordOne = (EditText) findViewById(R.id.passwordOne);
         passwordTwo = (EditText) findViewById(R.id.passwordTwo);
+        secAnswer = (EditText) findViewById(R.id.securityAnswer);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -34,14 +35,18 @@ public class RegisterUser extends Activity {
         regButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (passwordOne.getText().toString().equals(passwordTwo.getText().toString())) {
+                if (email.getText().length() > 0 &&
+                    passwordOne.getText().length() > 0 &&
+                    passwordTwo.getText().length() > 0 &&
+                    secAnswer.getText().length() > 0 &&
+                    passwordOne.getText().toString().equals(passwordTwo.getText().toString())) {
 
-                    prefs.edit().putString("email", email.getText().toString()).apply();
-                    prefs.edit().putString("password", passwordOne.getText().toString()).apply();
+                        prefs.edit().putString("securityAnswer", secAnswer.getText().toString()).apply();
+                        prefs.edit().putString("email", email.getText().toString()).apply();
+                        prefs.edit().putString("password", passwordOne.getText().toString()).apply();
+                        Intent i = new Intent(v.getContext(), UserAccount.class);
+                        startActivity(i);
                 }
-
-                Intent i = new Intent(v.getContext(), UserAccount.class);
-                startActivity(i);
             }
         });
     }
