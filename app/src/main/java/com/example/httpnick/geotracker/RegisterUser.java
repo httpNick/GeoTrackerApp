@@ -2,8 +2,10 @@ package com.example.httpnick.geotracker;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +27,8 @@ public class RegisterUser extends Activity {
         email = (EditText) findViewById(R.id.email_address);
         passwordOne = (EditText) findViewById(R.id.passwordOne);
         passwordTwo = (EditText) findViewById(R.id.passwordTwo);
-        prefs = this.getPreferences(Context.MODE_PRIVATE);
+
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 
         regButton.setOnClickListener(new View.OnClickListener() {
@@ -36,6 +39,9 @@ public class RegisterUser extends Activity {
                     prefs.edit().putString("email", email.getText().toString()).apply();
                     prefs.edit().putString("password", passwordOne.getText().toString()).apply();
                 }
+
+                Intent i = new Intent(v.getContext(), UserAccount.class);
+                startActivity(i);
             }
         });
     }
