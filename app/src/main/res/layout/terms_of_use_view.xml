@@ -27,7 +27,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="terms of use here"/>
+        android:text="Yo; You agree to our terms."/>
     <Button
         android:id="@+id/acceptTerms"
         android:layout_width="wrap_content"

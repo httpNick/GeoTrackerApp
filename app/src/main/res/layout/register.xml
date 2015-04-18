@@ -9,10 +9,9 @@
     android:weightSum="1">
 
 
-
     <TextView
         android:layout_width="344dp"
-        android:layout_height="105dp"
+        android:layout_height="134dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="GeoTracker"
         android:id="@+id/textView"
@@ -49,43 +48,22 @@
         android:layout_below="@+id/passwordOne"
         android:hint="@string/password_again_hint"
         android:ems="10"/>
-
-    <EditText
+    <TextView
+        android:id="@+id/securityQuestion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/secQues1"
-        android:layout_gravity="center_horizontal"
-        android:hint="Security Question #1"
-        android:editable="true"
-        android:clickable="true"
-        android:enabled="true" />
-
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="What is your Mother's maiden name?"
+        android:layout_below="@+id/passwordTwo"
+        />
     <EditText
+        android:id="@+id/securityAnswer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/secAnswer1"
-        android:editable="true"
-        android:enabled="true"
-        android:hint="Answer #1" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/secQues2"
-        android:hint="Security Question #2"
-        android:enabled="true"
-        android:editable="true"
-        android:clickable="true" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/secAnswer2"
-        android:clickable="true"
-        android:editable="true"
-        android:hint="Answer #2"
-        android:enabled="true" />
-
+        android:layout_below="@+id/securityQuestion"
+        android:hint="Answer"
+        android:ems="10"
+        />
     <Button
         android:id="@+id/registerButton"
         android:layout_width="wrap_content"

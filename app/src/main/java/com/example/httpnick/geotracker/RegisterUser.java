@@ -2,7 +2,6 @@ package com.example.httpnick.geotracker;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -36,8 +35,6 @@ public class RegisterUser extends Activity {
 
                     prefs.edit().putString("email", email.getText().toString()).apply();
                     prefs.edit().putString("password", passwordOne.getText().toString()).apply();
-                    Intent i = new Intent(v.getContext(), UserAccount.class);
-                    startActivity(i);
                 }
             }
         });
