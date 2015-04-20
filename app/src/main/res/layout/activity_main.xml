@@ -87,7 +87,7 @@
         android:editable="true"
         android:clickable="true"
         android:autoText="false"
-        android:inputType="textVisiblePassword" />
+        android:inputType="textPassword" />
 
     <TextView
         android:layout_width="match_parent"
