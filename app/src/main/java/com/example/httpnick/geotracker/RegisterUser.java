@@ -42,6 +42,7 @@ public class RegisterUser extends Activity {
                     prefs.edit().putString("securityAnswer", secAnswer.getText().toString()).apply();
                     prefs.edit().putString("email", email.getText().toString()).apply();
                     prefs.edit().putString("password", passwordOne.getText().toString()).apply();
+                    prefs.edit().putBoolean("loggedIn", true).apply();
                     Intent i = new Intent(v.getContext(), UserAccount.class);
                     startActivity(i);
                 }

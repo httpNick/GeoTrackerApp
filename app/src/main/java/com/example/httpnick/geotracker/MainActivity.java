@@ -35,6 +35,11 @@ public class MainActivity extends ActionBarActivity {
         pw.setText(pref.getString("password", "password"));
         ma = this;
 
+        if (pref.getBoolean("loggedIn", true)) {
+            Intent i = new Intent(getApplicationContext(), UserAccount.class);
+            startActivity(i);
+        }
+
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,6 +60,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 if (email.getText().toString().equals(pref.getString("email", "email")) &&
                     pw.getText().toString().equals(pref.getString("password", "password"))) {
+                    pref.edit().putBoolean("loggedIn", true).apply();
                     Intent i = new Intent(v.getContext(), UserAccount.class);
                     startActivity(i);
                 }else{

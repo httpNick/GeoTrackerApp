@@ -1,6 +1,8 @@
 package com.example.httpnick.geotracker;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,12 +12,14 @@ import android.widget.Button;
 
 
 public class UserAccount extends ActionBarActivity {
-
+    SharedPreferences prefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_account);
         Button traj = (Button) findViewById(R.id.trajectoryButton);
+        Button logout = (Button) findViewById(R.id.logoutButton);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         traj.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -24,7 +28,15 @@ public class UserAccount extends ActionBarActivity {
                 startActivity(i);
             }
         });
-        //
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                prefs.edit().putBoolean("loggedIn", false).apply();
+                Intent i = new Intent(v.getContext(), MainActivity.class);
+                startActivity(i);
+            }
+        });
+         //
     }
 
 
