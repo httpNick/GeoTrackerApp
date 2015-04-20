@@ -24,6 +24,11 @@
         android:textStyle="bold|italic"
         android:layout_marginLeft="0dp"
         android:gravity="center_vertical|center_horizontal" />
+    <Button
+        android:id="@+id/trajectoryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Trajectory"/>
 
 
 </LinearLayout>

@@ -32,6 +32,10 @@
             android:name=".UserAccount"
             android:label="@string/title_activity_user_account" >
         </activity>
+        <activity
+            android:name=".Trajectory"
+            android:label="Trajectory" >
+            </activity>
     </application>
 
 </manifest>
