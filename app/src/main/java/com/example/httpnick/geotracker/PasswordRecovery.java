@@ -28,7 +28,7 @@ public class PasswordRecovery extends ActionBarActivity {
                 if (ans.getText().toString().equals(pref.getString("securityAnswer", "answer"))) {
                     new AlertDialog.Builder(ma)
                             .setTitle("Your password")
-                            .setMessage("Password: " + pref.getString("securityAnswer", "answer"))
+                            .setMessage("Password: " + pref.getString("password", "pw"))
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // continue with delete
