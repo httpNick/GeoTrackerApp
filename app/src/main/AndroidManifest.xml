@@ -25,6 +25,10 @@
             android:label="TermsOfUse" >
             </activity>
         <activity
+            android:name=".PasswordRecovery"
+            android:label="PassWordRecovery" >
+            </activity>
+        <activity
             android:name=".UserAccount"
             android:label="@string/title_activity_user_account" >
         </activity>

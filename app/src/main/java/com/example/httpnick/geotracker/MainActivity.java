@@ -43,6 +43,14 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        findViewById(R.id.forgot).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), PasswordRecovery.class);
+                startActivity(i);
+            }
+        });
+
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (email.getText().toString().equals(pref.getString("email", "email")) &&
@@ -68,5 +76,11 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
         });
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        email.setText(pref.getString("email", "email"));
+        pw.setText(pref.getString("password", "password"));
     }
 }
