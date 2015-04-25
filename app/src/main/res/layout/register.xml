@@ -10,7 +10,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
-        android:background="#ff5b4fff"
+        android:background="@mipmap/earth3d2"
         android:orientation="vertical"
         android:weightSum="1">
 
@@ -21,10 +21,9 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="GeoTracker"
             android:id="@+id/textView"
-            android:background="@mipmap/map"
             android:paddingLeft="0dp"
             android:textAlignment="center"
-            android:textColor="#ffffaa49"
+            android:textColor="#ffffff"
             android:singleLine="false"
             android:textSize="50dp"
             android:textStyle="bold|italic"
@@ -36,7 +35,9 @@
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
             android:hint="@string/email_hint"
-            android:ems="10"/>
+            android:ems="10"
+            android:backgroundTint="#90ffffff"
+            android:textColor="#90ffff" />
         <EditText
             android:id="@+id/passwordOne"
             android:layout_width="match_parent"
@@ -45,7 +46,9 @@
             android:layout_below="@+id/email_address"
             android:layout_gravity="center_horizontal"
             android:hint="@string/password_hint"
-            android:ems="10"/>
+            android:ems="10"
+            android:backgroundTint="#90ffffff"
+            android:textColor="#90ffff" />
         <EditText
             android:id="@+id/passwordTwo"
             android:layout_width="match_parent"
@@ -53,7 +56,9 @@
             android:inputType="textPassword"
             android:layout_below="@+id/passwordOne"
             android:hint="@string/password_again_hint"
-            android:ems="10"/>
+            android:ems="10"
+            android:backgroundTint="#90ffffff"
+            android:textColor="#90ffff" />
         <TextView
             android:id="@+id/securityQuestion"
             android:layout_width="match_parent"
@@ -61,7 +66,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="What is your Mother's maiden name?"
             android:layout_below="@+id/passwordTwo"
-            />
+            android:textColor="#c0ffffff" />
         <EditText
             android:id="@+id/securityAnswer"
             android:layout_width="match_parent"
@@ -69,7 +74,8 @@
             android:layout_below="@+id/securityQuestion"
             android:hint="Answer"
             android:ems="10"
-            />
+            android:backgroundTint="#90ffffff"
+            android:textColor="#90ffff" />
         <Button
             android:id="@+id/registerButton"
             android:layout_width="wrap_content"
