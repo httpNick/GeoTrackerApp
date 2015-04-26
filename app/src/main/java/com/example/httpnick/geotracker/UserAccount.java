@@ -39,13 +39,13 @@ public class UserAccount extends ActionBarActivity {
          //
     }
 
-
-    @Override
+// THIS CREATES THE OPTIONS THING AT THE TOP RIGHT.
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_user_account, menu);
         return true;
-    }
+    } */
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -2,7 +2,7 @@
     <string name="app_name">GeoTracker</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="email_hint">email here</string>
+    <string name="email_hint">username here</string>
     <string name="password_hint">password here</string>
     <string name="password_again_hint">password again here</string>
     <string name="emailLabel">Enter email</string>

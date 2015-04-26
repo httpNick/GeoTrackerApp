@@ -41,12 +41,13 @@
             android:textColor="#ffffff" />
 
         <Button
-            android:layout_width="163dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Register"
             android:id="@+id/Register"
             android:layout_gravity="center_horizontal"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -66,7 +67,6 @@
             android:background="#ffffff"
             android:editable="true"
             android:clickable="true"
-            android:hint="Email address"
             android:longClickable="false"
             android:enabled="true" />
 
@@ -92,23 +92,25 @@
             android:autoText="false"
             android:inputType="textPassword" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/forgot"
-            android:layout_gravity="center_horizontal"
-            android:text="Forgot Password?"
-            android:textColor="#fffff42c"
-            android:clickable="true"
-            android:enabled="true"
-            android:textStyle="bold" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="99dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Login"
-            android:id="@+id/Login" />
+            android:textStyle="bold"
+            android:id="@+id/Login"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/forgot"
+            android:text="Forgot Password?"
+            android:enabled="true"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"/>
 
 
     </LinearLayout>

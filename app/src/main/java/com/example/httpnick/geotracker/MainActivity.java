@@ -31,8 +31,6 @@ public class MainActivity extends ActionBarActivity {
         login = (Button) findViewById(R.id.Login);
          email = (EditText) findViewById(R.id.email);
          pw = (EditText) findViewById(R.id.password);
-        email.setText(pref.getString("email", "email"));
-        pw.setText(pref.getString("password", "password"));
         ma = this;
 
         if (pref.getBoolean("loggedIn", true)) {
@@ -86,7 +84,9 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public void onStart() {
         super.onStart();
-        email.setText(pref.getString("email", "email"));
-        pw.setText(pref.getString("password", "password"));
+        if (pref.getBoolean("loggedIn", true)) {
+            Intent i = new Intent(getApplicationContext(), UserAccount.class);
+            startActivity(i);
+        }
     }
 }
