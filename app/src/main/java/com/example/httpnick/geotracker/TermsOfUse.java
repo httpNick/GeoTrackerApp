@@ -30,6 +30,7 @@ public class TermsOfUse extends ActionBarActivity {
             public void onClick(View v) {
                 Intent i = new Intent(v.getContext(), RegisterUser.class);
                 startActivity(i);
+                finish();
             }
         });
 
@@ -38,6 +39,7 @@ public class TermsOfUse extends ActionBarActivity {
             public void onClick(View v) {
                 Intent i = new Intent(v.getContext(), MainActivity.class);
                 startActivity(i);
+                finish();
             }
         });
 

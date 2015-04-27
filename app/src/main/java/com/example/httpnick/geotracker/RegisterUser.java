@@ -45,6 +45,7 @@ public class RegisterUser extends Activity {
                     prefs.edit().putBoolean("loggedIn", true).apply();
                     Intent i = new Intent(v.getContext(), UserAccount.class);
                     startActivity(i);
+                    finish();
                 }
             }
         });
