@@ -2,19 +2,24 @@ package com.example.httpnick.geotracker;
 
 
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
-
-import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.widget.ListView;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -27,9 +32,10 @@ import java.util.ArrayList;
 public class Trajectory extends ActionBarActivity {
     private ListView userListView;
     private ProgressDialog progressDialog;
-    private static final String COURSE_URL
-            = "http://cssgate.insttech.washington.edu/~mmuppa/Android/test.php?cmd=courses";
-
+    private static final String USER_URL
+            = "http://cssgate.insttech.washington.edu/~_450team7/databaseService.php?cmd=users";
+    ArrayList<String> usersList;
+    ArrayAdapter<String> adapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,12 +47,14 @@ public class Trajectory extends ActionBarActivity {
         super.onStart();
 
         DownloadWebPageTask task = new DownloadWebPageTask();
-        task.execute(new String[]{COURSE_URL});
+        task.execute(new String[]{USER_URL});
 
         userListView = (ListView) findViewById(R.id.user_list_view);
-/*
-        mCourseList = new ArrayList<>();
-        mAdapter = new CourseAdapter(this, mCourseList); */
+
+        usersList = new ArrayList<String>();
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, usersList);
+        userListView.setAdapter(adapter);
 
 
     }
@@ -64,6 +72,7 @@ public class Trajectory extends ActionBarActivity {
             super.onPreExecute();
             progressDialog = ProgressDialog.show(Trajectory.this, "Wait", "Downloading...");
         }
+
 
         @Override
         protected String doInBackground(String... urls) {
@@ -93,19 +102,19 @@ public class Trajectory extends ActionBarActivity {
             progressDialog.dismiss();
                 try {
                     JSONArray arr = new JSONArray(result);
-                    /*for (int i = 0; i < arr.length(); i++) {
+                    for (int i = 0; i < arr.length(); i++) {
                         JSONObject obj = arr.getJSONObject(i);
-                        Course course = new Course(obj.getString(Course.ID), obj.getString(Course.SHORT_DESC)
-                                , obj.getString(Course.LONG_DESC), obj.getString(Course.PRE_REQS));
-                        mCourseList.add(course);
-                    }*/
+                        usersList.add(obj.getString("username"));
+                        usersList.add(obj.getString("password"));
+                        usersList.add(obj.getString("answer"));
+                    }
                 } catch (JSONException e) {
                     System.out.println("JSON Exception");
                 }
-            /*
-            if (!mCourseList.isEmpty()) {
-                mCoursesListView.setAdapter(mAdapter);
-            } */
+
+            if (!usersList.isEmpty()) {
+                userListView.setAdapter(adapter);
+            }
         }
     }
 }
