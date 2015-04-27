@@ -16,11 +16,14 @@ import android.widget.EditText;
 
 public class TermsOfUse extends ActionBarActivity {
     private Button acceptButton;
+    private Button declineButton;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.terms_of_use_view);
         acceptButton = (Button) findViewById(R.id.acceptTerms);
+        declineButton = (Button) findViewById(R.id.declineTerms);
 
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -29,5 +32,14 @@ public class TermsOfUse extends ActionBarActivity {
                 startActivity(i);
             }
         });
+
+        declineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), MainActivity.class);
+                startActivity(i);
+            }
+        });
+
     }
 }
