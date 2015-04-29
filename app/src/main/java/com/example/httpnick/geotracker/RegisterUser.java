@@ -34,8 +34,8 @@ public class RegisterUser extends Activity {
             @Override
             public void onClick(View v) {
                 if (email.getText().length() > 0 &&
-                        passwordOne.getText().length() > 0 &&
-                        passwordTwo.getText().length() > 0 &&
+                        (passwordOne.getText().length() >= 5 && passwordOne.getText().length() < 10) &&
+                        (passwordTwo.getText().length() >= 5 && passwordTwo.getText().length() < 10) &&
                         secAnswer.getText().length() > 0 &&
                         passwordOne.getText().toString().equals(passwordTwo.getText().toString())) {
 
