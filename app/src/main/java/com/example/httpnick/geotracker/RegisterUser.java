@@ -39,7 +39,7 @@ public class RegisterUser extends Activity {
     RegisterUser ma;
     SharedPreferences prefs;
     private ProgressDialog progressDialog;
-    private static final String USER_URL
+    private String USER_URL
             = "http://450.atwebpages.com/adduser.php";
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,15 +70,12 @@ public class RegisterUser extends Activity {
                     prefs.edit().putString("securityAnswer", secAnswer.getText().toString()).apply();
                     prefs.edit().putString("email", email.getText().toString()).apply();
                     prefs.edit().putString("password", passwordOne.getText().toString()).apply(); */
-                    prefs.edit().putBoolean("loggedIn", true).apply();
                     /** Push to web service. */
-                    USER_URL.concat("?email="+email.getText().toString()+"&password="+passwordOne.getText().toString()+
+                    USER_URL += ("?email="+email.getText().toString()+"&password="+passwordOne.getText().toString()+
                     "&question="+question.getText().toString()+"&answer="+secAnswer.getText().toString());
-                    Intent i = new Intent(v.getContext(), UserAccount.class);
+                    System.out.println(USER_URL);
                     DownloadWebPageTask task = new DownloadWebPageTask();
                     task.execute(new String[]{USER_URL});
-                    startActivity(i);
-                    finish();
                 } else {
                     new AlertDialog.Builder(ma)
                             .setTitle("Please try again:")
@@ -161,8 +158,22 @@ public class RegisterUser extends Activity {
         @Override
         protected void onPostExecute(String result) {
             progressDialog.dismiss();
-            Toast.makeText(ma.getBaseContext(), "Account created Successfully!", Toast.LENGTH_SHORT)
-                    .show();
+            try {
+                JSONObject obj = new JSONObject(result);
+                String pass = (String) obj.get("result");
+                if (pass.equals("success")) {
+                    Intent i = new Intent(ma.getBaseContext(), MainActivity.class);
+                    Toast.makeText(ma.getBaseContext(), "Account created Successfully! Email sent for verification.", Toast.LENGTH_SHORT)
+                            .show();
+                    startActivity(i);
+                    finish();
+                } else {
+                    Toast.makeText(ma.getBaseContext(), "Error: Please try again", Toast.LENGTH_SHORT)
+                            .show();
+                }
+            } catch(JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
