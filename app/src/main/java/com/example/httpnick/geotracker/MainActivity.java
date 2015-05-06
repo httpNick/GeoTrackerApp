@@ -133,8 +133,11 @@ public class MainActivity extends ActionBarActivity {
             try {
                 JSONObject obj = new JSONObject(result);
                 String pass = (String) obj.get("result");
+                String id = (String) obj.get("userid");
                 if (pass.equals("success")) {
                     pref.edit().putBoolean("loggedIn", true).apply();
+                    pref.edit().putString("userid", id).apply();
+                    pref.edit().putString("email", email.getText().toString());
                     Intent i = new Intent(ma.getBaseContext(), UserAccount.class);
                     startActivity(i);
                 } else {

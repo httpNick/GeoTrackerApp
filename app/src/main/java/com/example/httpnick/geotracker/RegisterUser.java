@@ -40,7 +40,7 @@ public class RegisterUser extends Activity {
     SharedPreferences prefs;
     private ProgressDialog progressDialog;
     private static final String USER_URL
-            = "450.atwebpages.com/adduser.php";
+            = "http://450.atwebpages.com/adduser.php";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
