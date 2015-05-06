@@ -85,6 +85,7 @@ public class MainActivity extends ActionBarActivity {
         super.onStart();
         if (pref.getBoolean("loggedIn", true)) {
             Intent i = new Intent(getApplicationContext(), UserAccount.class);
+            GPSTracker tracker = new GPSTracker(this);
             startActivity(i);
         }
     }

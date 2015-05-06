@@ -36,8 +36,8 @@ import java.util.regex.Pattern;
 public class RegisterUser extends Activity {
     private EditText email, passwordOne, passwordTwo, secAnswer;
     private TextView question;
-    RegisterUser ma;
-    SharedPreferences prefs;
+    private RegisterUser ma;
+    private SharedPreferences prefs;
     private ProgressDialog progressDialog;
     private static final String USER_URL
             = "http://450.atwebpages.com/adduser.php";
