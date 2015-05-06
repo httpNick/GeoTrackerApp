@@ -26,6 +26,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +38,7 @@ import java.util.regex.Pattern;
 public class RegisterUser extends Activity {
     private EditText email, passwordOne, passwordTwo, secAnswer;
     private TextView question;
+    URLEncoder encode;
     RegisterUser ma;
     SharedPreferences prefs;
     private ProgressDialog progressDialog;
@@ -71,8 +74,15 @@ public class RegisterUser extends Activity {
                     prefs.edit().putString("email", email.getText().toString()).apply();
                     prefs.edit().putString("password", passwordOne.getText().toString()).apply(); */
                     /** Push to web service. */
-                    USER_URL += ("?email="+email.getText().toString()+"&password="+passwordOne.getText().toString()+
-                    "&question="+question.getText().toString()+"&answer="+secAnswer.getText().toString());
+                    try {
+                        USER_URL += "?email=" + email.getText().toString() + "&password=" + passwordOne.getText().toString() +
+                                "&question=";
+                        USER_URL += URLEncoder.encode(question.getText().toString(), "UTF-8");
+                        USER_URL += "&answer=" + secAnswer.getText().toString();
+                    }
+                    catch(UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     System.out.println(USER_URL);
                     DownloadWebPageTask task = new DownloadWebPageTask();
                     task.execute(new String[]{USER_URL});
