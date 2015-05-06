@@ -34,6 +34,7 @@ public class UserAccount extends ActionBarActivity {
                 prefs.edit().putBoolean("loggedIn", false).apply();
                 Intent i = new Intent(v.getContext(), MainActivity.class);
                 startActivity(i);
+                finish();
             }
         });
          //
