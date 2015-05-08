@@ -2,7 +2,6 @@ package com.example.httpnick.geotracker;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,25 +9,19 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 // This is a test commit to make sure git is working.
 public class MainActivity extends ActionBarActivity {
@@ -39,6 +32,7 @@ public class MainActivity extends ActionBarActivity {
     private ProgressDialog progressDialog;
     MainActivity ma;
     private String USER_URL;
+    private Button gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +41,24 @@ public class MainActivity extends ActionBarActivity {
         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         register = (Button) findViewById(R.id.Register);
         login = (Button) findViewById(R.id.Login);
-         email = (EditText) findViewById(R.id.email);
-         pw = (EditText) findViewById(R.id.password);
-         ma = this;
+        email = (EditText) findViewById(R.id.email);
+        pw = (EditText) findViewById(R.id.password);
+        gps = (Button) findViewById(R.id.GPS);
+        ma = this;
+        //GPSTracker tracker = new GPSTracker(this);
+
 
         if (pref.getBoolean("loggedIn", true)) {
             Intent i = new Intent(getApplicationContext(), UserAccount.class);
             startActivity(i);
         }
-
+        gps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(v.getContext(), LocationTracking.class);
+                startActivity(i);
+            }
+        });
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,7 +88,6 @@ public class MainActivity extends ActionBarActivity {
         super.onStart();
         if (pref.getBoolean("loggedIn", true)) {
             Intent i = new Intent(getApplicationContext(), UserAccount.class);
-            GPSTracker tracker = new GPSTracker(this);
             startActivity(i);
         }
     }

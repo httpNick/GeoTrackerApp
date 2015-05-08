@@ -39,8 +39,8 @@ public class GPSTracker extends Activity implements LocationListener {
      */
     public GPSTracker(Context context) {
         this.context = context;
-        locationManager = (LocationManager) this.context.getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 6000,10, this);
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,0, this);
         location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if(location != null) {
             lat = location.getLatitude();
@@ -50,7 +50,7 @@ public class GPSTracker extends Activity implements LocationListener {
             lat = 8675309;
             lon = 8675309;
         }
-        Log.d("myTag", "Latitude: " + lat + ". Longitude: " + lon);
+        System.out.println("Latitude: " + lat + ". Longitude: " + lon);
     }
 
 
@@ -67,6 +67,6 @@ public class GPSTracker extends Activity implements LocationListener {
     }
 
     public void onLocationChanged(Location l) {
-
+        System.out.println("LOCATION CHANGED");
     }
 }
