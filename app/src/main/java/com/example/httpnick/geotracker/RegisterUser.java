@@ -70,11 +70,11 @@ public class RegisterUser extends Activity {
                     prefs.edit().putString("securityAnswer", secAnswer.getText().toString()).apply();
                     prefs.edit().putString("email", email.getText().toString()).apply();
                     prefs.edit().putString("password", passwordOne.getText().toString()).apply(); */
-                    prefs.edit().putBoolean("loggedIn", true).apply();
+                    //prefs.edit().putBoolean("loggedIn", true).apply();
                     /** Push to web service. */
                     USER_URL.concat("?email="+email.getText().toString()+"&password="+passwordOne.getText().toString()+
                     "&question="+question.getText().toString()+"&answer="+secAnswer.getText().toString());
-                    Intent i = new Intent(v.getContext(), UserAccount.class);
+                    Intent i = new Intent(v.getContext(), MainActivity.class);
                     DownloadWebPageTask task = new DownloadWebPageTask();
                     task.execute(new String[]{USER_URL});
                     startActivity(i);
