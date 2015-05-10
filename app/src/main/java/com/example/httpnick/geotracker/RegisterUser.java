@@ -26,6 +26,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +41,7 @@ public class RegisterUser extends Activity {
     private RegisterUser ma;
     private SharedPreferences prefs;
     private ProgressDialog progressDialog;
-    private static final String USER_URL
+    private String USER_URL
             = "http://450.atwebpages.com/adduser.php";
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,6 @@ public class RegisterUser extends Activity {
         secAnswer = (EditText) findViewById(R.id.securityAnswer);
         question = (TextView) findViewById(R.id.securityQuestion);
         ma = this;
-
 
         regButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,8 +73,14 @@ public class RegisterUser extends Activity {
                     prefs.edit().putString("password", passwordOne.getText().toString()).apply(); */
                     //prefs.edit().putBoolean("loggedIn", true).apply();
                     /** Push to web service. */
-                    USER_URL.concat("?email="+email.getText().toString()+"&password="+passwordOne.getText().toString()+
-                    "&question="+question.getText().toString()+"&answer="+secAnswer.getText().toString());
+                    try {
+                        String encodedQuestion = URLEncoder.encode(question.getText().toString(), "UTF-8");
+                        USER_URL += ("?email="+email.getText().toString()+"&password="+passwordOne.getText().toString()+
+                                "&question="+encodedQuestion+"&answer="+secAnswer.getText().toString());
+                        System.out.println(USER_URL);
+                    } catch(UnsupportedEncodingException t) {
+                        System.out.println("ENCODING FAILED");
+                    }
                     Intent i = new Intent(v.getContext(), MainActivity.class);
                     DownloadWebPageTask task = new DownloadWebPageTask();
                     task.execute(new String[]{USER_URL});
