@@ -131,6 +131,7 @@ public class TermsOfUse extends ActionBarActivity {
                 JSONObject obj = new JSONObject(result);
                 String agreement = (String) obj.get("agreement");
                 String terms = android.text.Html.fromHtml(agreement).toString();
+                System.out.println(terms);
                 userAgreement.setText(terms);
             } catch (JSONException e) {
                 e.printStackTrace();
