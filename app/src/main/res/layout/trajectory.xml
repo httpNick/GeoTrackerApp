@@ -30,8 +30,8 @@
         android:id="@+id/switchGPS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textOn="GPS on"
-        android:textOff="GPS off"
+        android:textOn="Tracking off"
+        android:textOff="Tracking on"
         android:onClick="onToggleClicked"/>
 
 </LinearLayout>
