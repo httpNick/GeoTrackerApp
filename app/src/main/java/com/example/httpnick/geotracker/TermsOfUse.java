@@ -81,6 +81,12 @@ public class TermsOfUse extends ActionBarActivity {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        DownloadWebPageTask task = new DownloadWebPageTask();
+        task.execute(new String[]{"http://450.atwebpages.com/agreement.php"});
+    }
     /**
      * Running the loading of the JSON in a separate thread.
      * Code adapted from http://www.vogella.com/tutorials/AndroidBackgroundProcessing/article.html
