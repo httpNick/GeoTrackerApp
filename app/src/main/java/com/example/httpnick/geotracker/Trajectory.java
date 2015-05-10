@@ -3,16 +3,20 @@ package com.example.httpnick.geotracker;
 
 
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -44,12 +48,34 @@ public class Trajectory extends ActionBarActivity {
         setContentView(R.layout.trajectory);
     }
 
+    public void onToggleClicked(View view) {
+        // Is the toggle on?
+        boolean on = ((ToggleButton) view).isChecked();
+
+        if (on) {
+            GPSService.setServiceAlarm(view.getContext(), true);
+
+            ComponentName receiver = new ComponentName(view.getContext(), GPSBroadcastReceiver.class);
+            PackageManager pm = view.getContext().getPackageManager();
+
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+        } else {
+            GPSService.setServiceAlarm(view.getContext(), false);
+
+            ComponentName receiver = new ComponentName(view.getContext(), GPSBroadcastReceiver.class);
+            PackageManager pm = view.getContext().getPackageManager();
+
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-
-        DownloadWebPageTask task = new DownloadWebPageTask();
-        task.execute(new String[]{USER_URL});
 
         userListView = (ListView) findViewById(R.id.user_list_view);
 

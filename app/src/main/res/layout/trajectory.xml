@@ -26,5 +26,12 @@
         android:id="@+id/user_list_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <ToggleButton
+        android:id="@+id/switchGPS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOn="GPS on"
+        android:textOff="GPS off"
+        android:onClick="onToggleClicked"/>
 
 </LinearLayout>

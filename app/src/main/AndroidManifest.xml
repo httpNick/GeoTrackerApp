@@ -3,12 +3,19 @@
     package="com.example.httpnick.geotracker" >
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <service
+            android:name=".GPSService"
+            android:exported="false" >
+        </service>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -42,5 +49,11 @@
             android:name=".Trajectory"
             android:label="Trajectory" >
             </activity>
+        <receiver android:name=".GPSBroadcastReceiver"
+                  android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
