@@ -22,10 +22,6 @@
         android:layout_marginLeft="0dp"
         android:gravity="center_vertical|center_horizontal" />
 
-    <ListView
-        android:id="@+id/user_list_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
     <ToggleButton
         android:id="@+id/switchGPS"
         android:layout_width="wrap_content"
@@ -33,5 +29,10 @@
         android:textOn="Tracking off"
         android:textOff="Tracking on"
         android:onClick="onToggleClicked"/>
+
+    <TextView
+        android:id="@+id/user_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
