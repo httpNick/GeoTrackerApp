@@ -10,7 +10,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 /**
  * Created by httpnick on 5/10/15.
@@ -24,6 +28,10 @@ public class GPSService extends Service {
     private static final int LOCATION_DISTANCE = 0;
     private LocationDatabaseHelper db;
     private int mId = 1;
+    private TextView locationData;
+    private LocalBroadcastManager broadcastManager;
+    public String message = "Hello, world";
+
 
 private class LocationListener implements android.location.LocationListener {
     Location mLastLocation;
@@ -55,7 +63,8 @@ private class LocationListener implements android.location.LocationListener {
                     cursor.getFloat(5),
                     cursor.getLong(6));
             array[i] = lp;
-            System.out.println(array[i]);
+            System.out.println(array[i]); //display this on screen
+            sendResult(array[i].toString());
             i++;
             cursor.moveToNext();
         }
@@ -98,6 +107,7 @@ private class LocationListener implements android.location.LocationListener {
     @Override
     public void onCreate()
     {
+        broadcastManager = LocalBroadcastManager.getInstance(this);
         Log.e(TAG, "onCreate");
         initializeLocationManager();
         db = new LocationDatabaseHelper(getApplicationContext());
@@ -119,6 +129,17 @@ private class LocationListener implements android.location.LocationListener {
         } catch (IllegalArgumentException ex) {
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
+    }
+
+    /**
+     *
+     * @param message
+     */
+    public void sendResult(String message) {
+        Intent intent = new Intent("Result");
+        if(message != null)
+            intent.putExtra("Message", message);
+       broadcastManager.sendBroadcast(intent);
     }
 
     @Override
