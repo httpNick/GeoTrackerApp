@@ -2,8 +2,10 @@ package com.example.httpnick.geotracker;
 
 
 
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -38,6 +40,7 @@ import java.util.regex.Pattern;
 public class Trajectory extends ActionBarActivity {
     private ListView userListView;
     private ProgressDialog progressDialog;
+    Intent serviceIntent;
     private static final String USER_URL
             = "http://cssgate.insttech.washington.edu/~_450team7/databaseService.php?cmd=users";
     ArrayList<String> usersList;
@@ -46,47 +49,57 @@ public class Trajectory extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trajectory);
+        serviceIntent = new Intent(this, GPSService.class);
     }
+
 
     public void onToggleClicked(View view) {
         // Is the toggle on?
         boolean on = ((ToggleButton) view).isChecked();
 
         if (on) {
-            GPSService.setServiceAlarm(view.getContext(), true);
+            startService(serviceIntent);
+            /*GPSService.setServiceAlarm(view.getContext(), true);
 
             ComponentName receiver = new ComponentName(view.getContext(), GPSBroadcastReceiver.class);
             PackageManager pm = view.getContext().getPackageManager();
 
             pm.setComponentEnabledSetting(receiver,
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP);
+                    PackageManager.DONT_KILL_APP); */
         } else {
-            GPSService.setServiceAlarm(view.getContext(), false);
+            stopService(serviceIntent);
+            /*GPSService.setServiceAlarm(view.getContext(), false);
 
             ComponentName receiver = new ComponentName(view.getContext(), GPSBroadcastReceiver.class);
             PackageManager pm = view.getContext().getPackageManager();
 
             pm.setComponentEnabledSetting(receiver,
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP);
+                    PackageManager.DONT_KILL_APP); */
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        userListView = (ListView) findViewById(R.id.user_list_view);
-
-        usersList = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, usersList);
-        userListView.setAdapter(adapter);
-
+        ToggleButton theSwitch = (ToggleButton) findViewById(R.id.switchGPS);
+        if (isMyServiceRunning(GPSService.class)) {
+            theSwitch.setChecked(true);
+        } else {
+            theSwitch.setChecked(false);
+        }
 
     }
-
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Running the loading of the JSON in a separate thread.

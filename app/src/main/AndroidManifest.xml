@@ -11,11 +11,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <service
-            android:name=".GPSService"
-            android:exported="false" >
-        </service>
-
+        <service android:name=".GPSService" android:process=":my_service" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
