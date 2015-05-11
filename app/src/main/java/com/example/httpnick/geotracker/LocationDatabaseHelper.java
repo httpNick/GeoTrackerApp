@@ -2,10 +2,14 @@ package com.example.httpnick.geotracker;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.preference.PreferenceManager;
+
+import java.sql.ResultSet;
 
 /**
  * Created by httpnick on 5/10/15.
@@ -22,6 +26,7 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_LOCATION_SPEED = "speed";
     private static final String COLUMN_LOCATION_HEADING = "heading";
     private static final String COLUMN_LOCATION_TIMESTAMP = "timestamp";
+    SharedPreferences sp;
 
     public LocationDatabaseHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -56,7 +61,15 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
     public Cursor queryLocation() {
         Cursor c = getReadableDatabase().query(TABLE_LOCATION, null,
                 null, null, null, null, null);
+
         return c;
+    }
+
+    public Cursor querySingleUser(String uid) {
+
+        return getReadableDatabase().rawQuery("select * from location where userid = \"" +uid + "\";",
+                null);
+
     }
 
     public static class LocationCursor extends CursorWrapper {

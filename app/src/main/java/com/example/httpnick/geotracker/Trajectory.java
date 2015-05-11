@@ -9,9 +9,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -43,6 +46,9 @@ import java.util.regex.Pattern;
 public class Trajectory extends ActionBarActivity {
     Intent serviceIntent;
     BroadcastReceiver receiver;
+    private LocationDatabaseHelper db;
+    TextView userTextView;
+    SharedPreferences sp;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,8 +79,34 @@ public class Trajectory extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        db = new LocationDatabaseHelper(getApplicationContext());
+        userTextView = (TextView) findViewById(R.id.user_text_view);
+        Cursor cursor = db.querySingleUser(sp.getString("userid", "default"));
+        LocationPackage array[] = new LocationPackage[cursor.getCount()];
+        int i = 0;
+
+        cursor.moveToFirst();
+        StringBuilder sb = new StringBuilder();
+        while (cursor.isAfterLast() == false) {
+            LocationPackage lp = new LocationPackage(cursor.getString(1),
+                    cursor.getFloat(2),
+                    cursor.getDouble(3),
+                    cursor.getDouble(4),
+                    cursor.getFloat(5),
+                    cursor.getLong(6));
+            array[i] = lp;
+            //System.out.println(array[i]); //display this on screen
+            sb.append(array[i]+"\n");
+
+            i++;
+            cursor.moveToNext();
+        }
+        userTextView.setText(sb.toString());
+
         LocalBroadcastManager.getInstance(this).registerReceiver((receiver), new IntentFilter("message"));
         ToggleButton theSwitch = (ToggleButton) findViewById(R.id.switchGPS);
+
         if (isMyServiceRunning(GPSService.class)) {
             theSwitch.setChecked(true);
         } else {
