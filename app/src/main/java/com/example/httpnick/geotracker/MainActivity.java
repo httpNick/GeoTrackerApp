@@ -43,7 +43,6 @@ public class MainActivity extends ActionBarActivity {
         login = (Button) findViewById(R.id.Login);
         email = (EditText) findViewById(R.id.email);
         pw = (EditText) findViewById(R.id.password);
-        gps = (Button) findViewById(R.id.GPS);
         ma = this;
         //GPSTracker tracker = new GPSTracker(this);
 
@@ -52,13 +51,6 @@ public class MainActivity extends ActionBarActivity {
             Intent i = new Intent(getApplicationContext(), UserAccount.class);
             startActivity(i);
         }
-        gps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(v.getContext(), LocationTracking.class);
-                startActivity(i);
-            }
-        });
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
