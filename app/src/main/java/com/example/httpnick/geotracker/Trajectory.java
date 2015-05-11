@@ -4,12 +4,15 @@ package com.example.httpnick.geotracker;
 
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -39,10 +42,19 @@ import java.util.regex.Pattern;
  */
 public class Trajectory extends ActionBarActivity {
     Intent serviceIntent;
+    BroadcastReceiver receiver;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trajectory);
+        receiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                System.out.println("Here");
+                Log.d("GPS Tag", "It works");
+//                String s = intent.getStringExtra(GPSService.)
+            }
+        };
         serviceIntent = new Intent(this, GPSService.class);
     }
 
@@ -61,6 +73,7 @@ public class Trajectory extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver((receiver), new IntentFilter("message"));
         ToggleButton theSwitch = (ToggleButton) findViewById(R.id.switchGPS);
         if (isMyServiceRunning(GPSService.class)) {
             theSwitch.setChecked(true);
