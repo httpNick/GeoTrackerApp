@@ -86,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public void onStart() {
         super.onStart();
-        if (pref.getBoolean("loggedIn", true)) {
+        if (pref.getBoolean("loggedIn", false)) {
             Intent i = new Intent(getApplicationContext(), UserAccount.class);
             startActivity(i);
         }
@@ -140,28 +140,27 @@ public class MainActivity extends ActionBarActivity {
                 if (pass.equals("success")) {
                     pref.edit().putBoolean("loggedIn", true).apply();
                     pref.edit().putString("userid", id).apply();
-                    pref.edit().putString("email", email.getText().toString());
+                    pref.edit().putString("email", email.getText().toString()).apply();
                     Intent i = new Intent(ma.getBaseContext(), UserAccount.class);
                     startActivity(i);
-                } else {
-                    new AlertDialog.Builder(ma)
-                            .setTitle("Incorrect login credentials")
-                            .setMessage("Please re-enter your email and password.")
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // continue with delete
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // do nothing
-                                }
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
                 }
+
             } catch (JSONException e) {
-               e.printStackTrace();
+                new AlertDialog.Builder(ma)
+                        .setTitle("Incorrect login credentials")
+                        .setMessage("Please re-enter your email and password.")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue with delete
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // do nothing
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
             }
             }
     }

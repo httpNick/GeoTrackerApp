@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 
 public class UserAccount extends ActionBarActivity {
@@ -21,6 +22,11 @@ public class UserAccount extends ActionBarActivity {
         Button logout = (Button) findViewById(R.id.logoutButton);
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
+        TextView loggedInEmail = (TextView) findViewById(R.id.currentlyLoggedInEmail);
+        loggedInEmail.setText(loggedInEmail.getText().toString()
+                + " Logged in as: " + prefs.getString("email", "email"));
+
+
         traj.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -32,6 +38,7 @@ public class UserAccount extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 prefs.edit().putBoolean("loggedIn", false).apply();
+                prefs.edit().putString("userid", "default").apply();
                 Intent i = new Intent(v.getContext(), MainActivity.class);
                 startActivity(i);
                 finish();
