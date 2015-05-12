@@ -12,7 +12,9 @@ import android.preference.PreferenceManager;
 import java.sql.ResultSet;
 
 /**
- * Created by httpnick on 5/10/15.
+ * @class LocationDatabaseHelper
+ * @author Nick Duncan
+ * The class used for helping the storage of user info such as trac data on the local database.
  */
 public class LocationDatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "locations.sqlite";
@@ -32,6 +34,10 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
         super(context, DB_NAME, null, VERSION);
     }
 
+    /**
+     * Creates the table that will be used to store user data
+     * @param db
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table location (" +
@@ -42,11 +48,22 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
                 "timestamp varchar(100))");
     }
 
+    /**
+     * Test method not currently used
+     * @param db
+     * @param oldVersion
+     * @param newVersion
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
 
+    /**
+     * used to insert location data to database
+     * @param locpack Takes the location package of user locaiton data
+     * @return returns the database to be written
+     */
     public long insertLocation(LocationPackage locpack) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_LOCATION_id, locpack.id);
@@ -58,6 +75,10 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
         return getWritableDatabase().insert(TABLE_LOCATION, null, cv);
     }
 
+    /**
+     * Method used for getting a cursor on the database that is being inserted to
+     * @return Returns a cursor
+     */
     public Cursor queryLocation() {
         Cursor c = getReadableDatabase().query(TABLE_LOCATION, null,
                 null, null, null, null, null);
@@ -65,22 +86,38 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
         return c;
     }
 
+    /**
+     * Returns the cursor assoicated with a signle user
+     * @param uid The user id number
+     * @return Database cursor
+     */
     public Cursor querySingleUser(String uid) {
 
         return getReadableDatabase().rawQuery("select * from location where userid = \"" +uid + "\";",
                 null);
 
     }
+
+    /**
+     * Clears a table in the database used for loc storage
+     */
     public void clearDatabase() {
         getWritableDatabase().delete(TABLE_LOCATION, null, null);
     }
 
+    /**
+     * Class used for local database helpijg
+     */
     public static class LocationCursor extends CursorWrapper {
 
         public LocationCursor(Cursor c) {
             super(c);
         }
 
+        /**
+         * Method used to get the location package object of a user
+         * @return The location package of the user
+         */
         public LocationPackage getLocationPackage() {
             if (isBeforeFirst() || isAfterLast()) {
                 return null;

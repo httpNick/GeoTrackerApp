@@ -24,6 +24,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 // This is a test commit to make sure git is working.
+
+/*
+ * Class used for the main activity of this app.
+ * @author Nick Duncan
+ */
 public class MainActivity extends ActionBarActivity {
     private Button register;
     private Button login;
@@ -34,6 +39,10 @@ public class MainActivity extends ActionBarActivity {
     private String USER_URL;
     private Button gps;
 
+    /**
+     * Instantiates most buttons used in this app
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

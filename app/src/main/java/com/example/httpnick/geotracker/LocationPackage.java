@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * Created by httpnick on 5/10/15.
+ * @class LocationPackage class used as an object representation of a user location data
+ * @author Nick Duncan
  */
 public class LocationPackage {
     String id;
@@ -16,6 +17,15 @@ public class LocationPackage {
     long time;
 
 
+    /**
+     * Sets the user data being passed in as the users current location
+     * @param id
+     * @param heading
+     * @param longitude
+     * @param latitude
+     * @param speed
+     * @param time
+     */
     public LocationPackage(String id, float heading, double longitude,
                            double latitude, float speed, long time) {
         this.id = id;
@@ -27,6 +37,10 @@ public class LocationPackage {
 
     }
 
+    /**
+     * toString method the prints a nice view of the users location,.
+     * @return A string of a locaiton point of the user
+     */
     @Override
     public String toString() {
         long unixSeconds = time;

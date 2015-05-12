@@ -17,7 +17,11 @@ import android.view.View;
 import android.widget.TextView;
 
 /**
- * Created by httpnick on 5/10/15.
+ * @class GPSService
+ * @author Nick Duncan
+ * A service class that is used to provide, monitor and interact with the GPS portion of the app.
+ * Provides the main service that gets the users current location that will be pushed to both
+ * the local database as well as the web service db.
  */
 public class GPSService extends Service {
 
@@ -40,6 +44,11 @@ private class LocationListener implements android.location.LocationListener {
         Log.e(TAG, "LocationListener " + provider);
         mLastLocation = new Location(provider);
     }
+
+    /**
+     *
+     * @param location takes the current users locations when the users location has changed from the last one
+     */
     @Override
     public void onLocationChanged(Location location)
     {
@@ -70,16 +79,33 @@ private class LocationListener implements android.location.LocationListener {
         }
         mLastLocation.set(location);
     }
+
+    /**
+     *
+     * @param provider used when the gps service provider has been disabled
+     */
     @Override
     public void onProviderDisabled(String provider)
     {
         Log.e(TAG, "onProviderDisabled: " + provider);
     }
+
+    /**
+     *
+     * @param provider used when the gps service provider has been enabled
+     */
     @Override
     public void onProviderEnabled(String provider)
     {
         Log.e(TAG, "onProviderEnabled: " + provider);
     }
+
+    /**
+     *
+     * @param provider the name of the provider
+     * @param status the current status that has been changed
+     * @param extras the extras being used (wrapper)
+     */
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras)
     {
@@ -91,12 +117,24 @@ private class LocationListener implements android.location.LocationListener {
             new LocationListener(LocationManager.GPS_PROVIDER),
             new LocationListener(LocationManager.NETWORK_PROVIDER)};
 
+    /**
+     * Testing method that always returns null
+     * @param arg0
+     * @return null returns
+     */
     @Override
     public IBinder onBind(Intent arg0)
     {
         return null;
     }
 
+    /**
+     *
+     * @param intent the inent used
+     * @param flags flags being passed
+     * @param startId the start id of the user
+     * @return
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
@@ -104,6 +142,10 @@ private class LocationListener implements android.location.LocationListener {
         return START_STICKY;
     }
 
+    /**
+     * Method that trys to start a broadcast maneger and get the network provider as well as location.
+     * Written to catch errors when there is know provider or location avialble
+     */
     @Override
     public void onCreate()
     {
@@ -133,7 +175,7 @@ private class LocationListener implements android.location.LocationListener {
 
     /**
      *
-     * @param message
+     * @param message The message that will be broadcasted and stored
      */
     public void sendResult(String message) {
         Intent intent = new Intent("Result");
@@ -142,6 +184,9 @@ private class LocationListener implements android.location.LocationListener {
        broadcastManager.sendBroadcast(intent);
     }
 
+    /**
+     * Removes the location listeners
+     */
     @Override
     public void onDestroy()
     {
@@ -158,6 +203,9 @@ private class LocationListener implements android.location.LocationListener {
         }
     }
 
+    /**
+     * Starts the location manager
+     */
     private void initializeLocationManager() {
         Log.e(TAG, "initializeLocationManager");
         if (mLocationManager == null) {

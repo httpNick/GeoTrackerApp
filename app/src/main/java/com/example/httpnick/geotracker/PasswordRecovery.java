@@ -23,7 +23,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Created by httpnick on 4/20/15.
+ * PasswordRecovery activity class used to help users recover their passwords.
+ * @author Nick D
  */
 public class PasswordRecovery extends ActionBarActivity {
     PasswordRecovery ma;
