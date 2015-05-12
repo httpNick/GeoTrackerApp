@@ -12,6 +12,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+/**
+ * A class that handles user account information
+ * @author Nick Duncan
+ */
 public class UserAccount extends ActionBarActivity {
     SharedPreferences prefs;
     @Override

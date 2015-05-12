@@ -39,10 +39,9 @@ import android.renderscript.Element;
 import android.widget.TextView;
 
 /**
- * Created by httpnick on 4/16/15.
+ * A class that displays Terms of Use conditions that are pulled from the Web.
+ * @author Nick Duncan
  */
-
-
 public class TermsOfUse extends ActionBarActivity {
     private Button acceptButton;
     private Button declineButton;

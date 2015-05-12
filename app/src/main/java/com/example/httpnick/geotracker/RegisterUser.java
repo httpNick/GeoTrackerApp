@@ -32,17 +32,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by httpnick on 4/10/15.
+ * A class that handles registering users.
+ * @author Nick Duncan
  */
-
 public class RegisterUser extends Activity {
     private EditText email, passwordOne, passwordTwo, secAnswer;
     private TextView question;
     private RegisterUser ma;
     private SharedPreferences prefs;
     private ProgressDialog progressDialog;
-    private String USER_URL
-            = "http://450.atwebpages.com/adduser.php";
+    private String USER_URL = "http://450.atwebpages.com/adduser.php";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,7 +1,5 @@
 package com.example.httpnick.geotracker;
 
-
-
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -41,7 +39,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by httpnick on 4/20/15.
+ * A class that displays the GPS coordinate information.
+ * @author Nick Duncan
  */
 public class Trajectory extends ActionBarActivity {
     Intent serviceIntent;
