@@ -58,7 +58,8 @@ public class Trajectory extends ActionBarActivity {
             public void onReceive(Context context, Intent intent) {
                 System.out.println("Here");
                 Log.d("GPS Tag", "It works");
-//                String s = intent.getStringExtra(GPSService.)
+                String s = intent.getStringExtra("message");
+//                System.out.println(s);
             }
         };
         serviceIntent = new Intent(this, GPSService.class);
@@ -97,7 +98,7 @@ public class Trajectory extends ActionBarActivity {
                     cursor.getLong(6));
             array[i] = lp;
             //System.out.println(array[i]); //display this on screen
-            sb.append(array[i]+"\n");
+            sb.append(array[i]+"\n" + "\n");
 
             i++;
             cursor.moveToNext();

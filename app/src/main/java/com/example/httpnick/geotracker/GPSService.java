@@ -63,7 +63,7 @@ private class LocationListener implements android.location.LocationListener {
                     cursor.getFloat(5),
                     cursor.getLong(6));
             array[i] = lp;
-            System.out.println(array[i]); //display this on screen
+//            System.out.println(array[i]); //display this on screen
             sendResult(array[i].toString());
             i++;
             cursor.moveToNext();
