@@ -47,7 +47,7 @@ public class MainActivity extends ActionBarActivity {
         //GPSTracker tracker = new GPSTracker(this);
 
 
-        if (pref.getBoolean("loggedIn", true)) {
+        if (pref.getBoolean("loggedIn", false)) {
             Intent i = new Intent(getApplicationContext(), UserAccount.class);
             startActivity(i);
         }

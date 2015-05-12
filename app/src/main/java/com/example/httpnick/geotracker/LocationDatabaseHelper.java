@@ -71,6 +71,9 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
                 null);
 
     }
+    public void clearDatabase() {
+        getWritableDatabase().delete(TABLE_LOCATION, null, null);
+    }
 
     public static class LocationCursor extends CursorWrapper {
 
