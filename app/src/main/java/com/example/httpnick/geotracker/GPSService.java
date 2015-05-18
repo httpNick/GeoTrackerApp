@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -30,6 +31,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @class GPSService
@@ -43,7 +46,8 @@ public class GPSService extends Service {
     private static final String TAG = "GPSService";
     private SharedPreferences pref;
     private LocationManager mLocationManager;
-    private static final int LOCATION_INTERVAL = 6000; //60 seconds
+    private static final int LOCATION_INTERVAL = 6000; //6 seconds
+    private static final long PUSH_NETWORK_INTERVAL = 60000;
     private static final int LOCATION_DISTANCE = 0;
     private LocationDatabaseHelper db;
     private int mId = 1;
@@ -73,32 +77,8 @@ public class GPSService extends Service {
             long unixTime = System.currentTimeMillis() / 1000L;
             LocationPackage insertion = new LocationPackage(theId, mLastLocation.getBearing(), mLastLocation.getLongitude(),
                     mLastLocation.getLatitude(), mLastLocation.getSpeed(), unixTime);
+            System.out.println(insertion);
             db.insertLocation(insertion);
-            DB_URL = "http://450.atwebpages.com/logAdd.php?lat="+Math.round(location.getLatitude()*10)/10+
-                    "&lon="+Math.round(location.getLongitude()*10)/10+"&speed="+location.getSpeed()+
-                    "&heading="+Math.round(location.getBearing()*10)/10+"&timestamp="+unixTime+
-                    "&source=" + theId;
-            System.out.println(theId + " " + unixTime);
-            DownloadWebPageTask task = new DownloadWebPageTask();
-            task.execute(new String[]{DB_URL});
-            /*Cursor cursor = db.queryLocation();
-            LocationPackage array[] = new LocationPackage[cursor.getCount()];
-            int i = 0;
-
-            cursor.moveToFirst();
-            while (cursor.isAfterLast() == false) {
-                LocationPackage lp = new LocationPackage(cursor.getString(1),
-                        cursor.getFloat(2),
-                        cursor.getDouble(3),
-                        cursor.getDouble(4),
-                        cursor.getFloat(5),
-                        cursor.getLong(6));
-                array[i] = lp;
-//            System.out.println(array[i]); //display this on screen
-                sendResult(array[i].toString());
-                i++;
-                cursor.moveToNext();
-            } */
             mLastLocation.set(location);
         }
         /**
@@ -179,6 +159,46 @@ public class GPSService extends Service {
             mLocationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
                     mLocationListeners[0]);
+            final Handler handler = new Handler();
+            Timer timer = new Timer();
+            TimerTask doAsynchronousTask = new TimerTask() {
+                @Override
+                public void run() {
+                    handler.post(new Runnable() {
+                        @SuppressWarnings("unchecked")
+                        public void run() {
+                            try {
+                                Cursor cursor = db.queryLocation();
+                                int i = 0;
+                                cursor.moveToFirst();
+                                while (!cursor.isAfterLast()) {
+                                    LocationPackage lp = new LocationPackage(cursor.getString(1),
+                                            cursor.getFloat(2),
+                                            cursor.getDouble(3),
+                                            cursor.getDouble(4),
+                                            cursor.getFloat(5),
+                                            cursor.getLong(6));
+                                    DB_URL = "http://450.atwebpages.com/logAdd.php?lat="+Math.round(lp.latitude*10)/10+
+                                            "&lon="+Math.round(lp.longitude*10)/10+"&speed="+lp.speed+
+                                            "&heading="+Math.round(lp.heading*10)/10+"&timestamp="+lp.time+
+                                            "&source=" + lp.id;
+                                    DownloadWebPageTask task = new DownloadWebPageTask();
+                                    task.execute(new String[]{DB_URL});
+                                    //sendResult(array[i].toString());
+                                    i++;
+                                    cursor.moveToNext();
+                                    System.out.println("PUSHED TO THE NETWORK!!!");
+                                    db.clearDatabase();
+                                }
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            };
+            timer.schedule(doAsynchronousTask, 0, PUSH_NETWORK_INTERVAL);
         } catch (java.lang.SecurityException ex) {
             Log.i(TAG, "fail to request location update, ignore", ex);
         } catch (IllegalArgumentException ex) {

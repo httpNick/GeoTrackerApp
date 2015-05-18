@@ -138,7 +138,6 @@ public class RegisterUser extends Activity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = ProgressDialog.show(RegisterUser.this, "Wait", "Downloading...");
         }
 
 
@@ -167,7 +166,6 @@ public class RegisterUser extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
-            progressDialog.dismiss();
             Toast.makeText(ma.getBaseContext(), "Account created Successfully!", Toast.LENGTH_SHORT)
                     .show();
         }
