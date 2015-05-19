@@ -1,10 +1,6 @@
 package com.example.httpnick.geotracker;
-
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -17,10 +13,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -43,21 +35,28 @@ import java.util.TimerTask;
  */
 public class GPSService extends Service {
 
+    /** tag used for logs*/
     private static final String TAG = "GPSService";
+    /** preferences for the current application */
     private SharedPreferences pref;
+    /** LocationManager to manage location functionality.*/
     private LocationManager mLocationManager;
+    /** Interval to pull locations and place into local sqlite DB*/
     private static final int LOCATION_INTERVAL = 6000; //6 seconds
+    /** Interval to push local sqlite DB contents to the web service. */
     private static final long PUSH_NETWORK_INTERVAL = 60000;
+    /** Distance in which to look for a change.*/
     private static final int LOCATION_DISTANCE = 0;
+    /** Reference to the sqlite db helper for this app*/
     private LocationDatabaseHelper db;
-    private int mId = 1;
-    private TextView locationData;
+    /** broadcast manager for notifying users*/
     private LocalBroadcastManager broadcastManager;
-    public String message = "Hello, world";
-    ProgressDialog pd;
+    /** URL to be used to push data to web service*/
     private String DB_URL;
 
-
+    /**
+     * Private inner class to manage location events.
+     */
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
 
@@ -138,15 +137,17 @@ public class GPSService extends Service {
     }
     /**
      * Method that trys to start a broadcast maneger and get the network provider as well as location.
-     * Written to catch errors when there is know provider or location avialble
+     * Written to catch errors when there is known provider or location available
      */
     @Override
     public void onCreate() {
         broadcastManager = LocalBroadcastManager.getInstance(this);
         Log.e(TAG, "onCreate");
         initializeLocationManager();
+        // get reference to local db to be used by the service.
         db = new LocationDatabaseHelper(getApplicationContext());
         try {
+            // start to request location updates to grab (provided by the network).
             mLocationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
                     mLocationListeners[1]);
@@ -156,10 +157,12 @@ public class GPSService extends Service {
             Log.d(TAG, "network provider does not exist, " + ex.getMessage());
         }
         try {
+            // start to request location updates to grab (provided by GPS).
             mLocationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
                     mLocationListeners[0]);
             final Handler handler = new Handler();
+            // Timer to be used to send off data to web service at given interval.
             Timer timer = new Timer();
             TimerTask doAsynchronousTask = new TimerTask() {
                 @Override
@@ -168,9 +171,17 @@ public class GPSService extends Service {
                         @SuppressWarnings("unchecked")
                         public void run() {
                             try {
+                                // Cursor reference to the query made on the local db.
                                 Cursor cursor = db.queryLocation();
                                 int i = 0;
                                 cursor.moveToFirst();
+                                /** Loop logic:
+                                 *  - for each row returned by the query:
+                                 *          - Save data into a LocationPackage object
+                                 *          - Formulate the web service URL based off the data
+                                 *          - Execute web task
+                                 *          - Move to the next row with the cursor
+                                 *          - Clear the local db*/
                                 while (!cursor.isAfterLast()) {
                                     LocationPackage lp = new LocationPackage(cursor.getString(1),
                                             cursor.getFloat(2),
@@ -285,6 +296,7 @@ public class GPSService extends Service {
         protected void onPostExecute(String result) {
             try {
                 JSONObject obj = new JSONObject(result);
+                /** Check to make sure the web service successfully processed the post*/
                 String pass = (String) obj.get("result");
                 if (pass.equals("success")) {
                     System.out.println("SUCCESSFULLY PUSHED TO THE WEBSERVICE!!");

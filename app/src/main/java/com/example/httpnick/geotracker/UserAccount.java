@@ -42,9 +42,9 @@ public class UserAccount extends ActionBarActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                prefs.edit().putBoolean("loggedIn", false).apply();
-                //prefs.edit().putString("userid", "default").apply();
-                prefs.edit().remove("userid");
+                prefs.edit().putBoolean("loggedIn", false).commit();
+                //prefs.edit().putString("userid", "default").commit();
+                prefs.edit().remove("userid").commit();
                 Intent i = new Intent(v.getContext(), MainActivity.class);
                 startActivity(i);
                 finish();

@@ -139,9 +139,9 @@ public class MainActivity extends ActionBarActivity {
                 String pass = (String) obj.get("result");
                 String id = (String) obj.get("userid");
                 if (pass.equals("success")) {
-                    pref.edit().putBoolean("loggedIn", true).apply();
-                    pref.edit().putString("userid", id).apply();
-                    pref.edit().putString("email", email.getText().toString()).apply();
+                    pref.edit().putBoolean("loggedIn", true).commit();
+                    pref.edit().putString("userid", id).commit();
+                    pref.edit().putString("email", email.getText().toString()).commit();
                     Intent i = new Intent(ma.getBaseContext(), UserAccount.class);
                     startActivity(i);
                 }
