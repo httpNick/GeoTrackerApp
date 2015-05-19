@@ -21,7 +21,7 @@ public class RobotiumPasswordRecoveryTest extends ActivityInstrumentationTestCas
     }
 
     /**
-     * Call super.setUp() and initial Solo solo.
+     * Call super.setUp() and initialize Solo solo.
      * @throws Exception
      */
     public void setUp() throws Exception {

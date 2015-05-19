@@ -23,7 +23,7 @@ public class RobotiumLoginTest extends ActivityInstrumentationTestCase2<MainActi
     }
 
     /**
-     * Call super.setUp() and initial Solo solo.
+     * Call super.setUp() and initialize Solo solo.
      * @throws Exception
      */
     public void setUp() throws Exception {

@@ -23,7 +23,7 @@ public class RobotiumRegisterUserTest extends ActivityInstrumentationTestCase2<R
     }
 
     /**
-     * Call super.setUp() and initial Solo solo.
+     * Call super.setUp() and initialize Solo solo.
      * @throws Exception
      */
     public void setUp() throws Exception {
