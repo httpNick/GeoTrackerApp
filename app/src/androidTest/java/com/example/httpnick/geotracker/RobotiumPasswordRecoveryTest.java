@@ -44,7 +44,7 @@ public class RobotiumPasswordRecoveryTest extends ActivityInstrumentationTestCas
         solo.enterText(0, "moorem27@uw.edu");
         solo.clickOnButton("Send email");
         boolean recovered = solo.searchText("Success!");
-        assertTrue("Successfully logged in", recovered);
+        assertTrue("Successfully reset password", recovered);
     }
 
     /**
