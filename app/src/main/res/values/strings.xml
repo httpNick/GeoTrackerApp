@@ -12,4 +12,6 @@
     <string name="title_activity_user_account">UserAccount</string>
     <string name="accept">accept</string>
     <string name="decline">decline</string>
+    <string name="pick_time">Choose time</string>
+    <string name="pick_date">Choose date</string>
 </resources>
