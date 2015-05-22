@@ -36,21 +36,115 @@
         android:textOff="Tracking on"
         android:onClick="onToggleClicked"/>
 
-    <TextView
-        android:id="@+id/user_text_view"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/startView"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textColor="#ffffff" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/pick_time"
-        android:onClick="showTimePickerDialog"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/pick_date"
-        android:onClick="showDatePickerDialog" />
+        android:background="@android:color/darker_gray"
+        android:orientation="vertical"
+        android:padding="10dip" >
 
+    <TextView
+        android:id="@+id/startDateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textColor="@android:color/white"
+        android:text="Set start time/date: "/>
+    <Button
+        android:id="@+id/trajectoryDatePickButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="Start Date" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/startDateView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        android:orientation="vertical"
+        android:padding="10dip" >
+
+    <TextView
+        android:id="@+id/startTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:textColor="@android:color/white" />
+    <Button
+        android:id="@+id/trajectoryTimeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="Start Time" />
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/endView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        android:orientation="vertical"
+        android:padding="10dip" >
+
+        <TextView
+            android:id="@+id/endDateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:textColor="@android:color/white"
+            android:text="Set end time/date: "/>
+
+        <Button
+            android:id="@+id/trajectoryEndDatePickButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="End Date" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/endDateView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        android:orientation="vertical"
+        android:padding="10dip" >
+
+        <TextView
+            android:id="@+id/endTimeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:textColor="@android:color/white" />
+        <Button
+            android:id="@+id/trajectoryEndTimeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="End Time" />
+    </RelativeLayout>
 </LinearLayout>
 </ScrollView>
