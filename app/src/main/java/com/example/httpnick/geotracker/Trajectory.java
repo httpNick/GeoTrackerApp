@@ -89,7 +89,6 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         times = new HashMap<TextView, int[]>();
 
         Bundle b = new Bundle();
-        b.
 
         startPickDate.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
