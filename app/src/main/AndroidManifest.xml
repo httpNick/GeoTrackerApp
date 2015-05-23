@@ -41,5 +41,9 @@
             android:name=".Trajectory"
             android:label="Trajectory" >
             </activity>
+        <activity
+            android:name=".DisplayTrajectory"
+            android:label="DisplayTrajectory" >
+        </activity>
     </application>
 </manifest>

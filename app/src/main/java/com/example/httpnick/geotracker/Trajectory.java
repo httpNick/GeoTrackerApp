@@ -1,6 +1,7 @@
 package com.example.httpnick.geotracker;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
@@ -8,6 +9,7 @@ import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -42,6 +44,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,10 +56,11 @@ import java.util.regex.Pattern;
 public class Trajectory extends FragmentActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
     Intent serviceIntent;
     private LocationDatabaseHelper db;
-    TextView userTextView;
+    Bundle b;
     SharedPreferences sp;
 
     private HashMap<TextView, int[]> times;
+    private Button viewLocations;
 
     private TextView startDateDisplay;
     private TextView startTimeDisplay;
@@ -72,10 +76,13 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
     private TextView activeDateDisplay;
     private TextView activeTimeDisplay;
 
+    FragmentActivity that;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trajectory);
+        viewLocations = (Button) findViewById(R.id.viewLocationsButton);
         startDateDisplay = (TextView) findViewById(R.id.startDateText);
         startTimeDisplay = (TextView) findViewById(R.id.startTimeText);
         startPickDate = (Button) findViewById(R.id.trajectoryDatePickButton);
@@ -87,8 +94,38 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         endPickTime = (Button) findViewById(R.id.trajectoryEndTimeButton);
 
         times = new HashMap<TextView, int[]>();
+        that = this;
+        b = new Bundle();
 
-        Bundle b = new Bundle();
+        viewLocations.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(startDateDisplay.getText().length() > 0 &&
+                        startTimeDisplay.getText().length() > 0 &&
+                        endDateDisplay.getText().length() > 0 &&
+                        endTimeDisplay.getText().length() > 0) {
+                    fillBundle();
+                    Intent i = new Intent(that.getBaseContext(), DisplayTrajectory.class);
+                    i.putExtras(b);
+                    startActivity(i);
+                } else {
+                    new AlertDialog.Builder(that)
+                            .setTitle("Incomplete form")
+                            .setMessage("Please complete all dates/times first.")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // continue with delete
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
+            }
+        });
 
         startPickDate.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -121,11 +158,12 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
 
 
     public void onToggleClicked(View view) {
-        // Is the toggle on?
         boolean on = ((ToggleButton) view).isChecked();
 
+        // Toggled on?
         if (on) {
             startService(serviceIntent);
+            // Toggled off?
         } else {
             stopService(serviceIntent);
         }
@@ -197,37 +235,55 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
 
     public void updateDateDisplay(TextView view, int year, int month, int day) {
         view.setText("Y: " + year + " M: " + month + " D: " + day);
-        int[] temp = new int[5];
+        int[] temp = new int[3];
         temp[0] = year;
         temp[1] = month;
         temp[2] = day;
         if(times.containsKey(view)) {
-            temp[3] = times.get(view)[3];
-            temp[4] = times.get(view)[4];
+            times.get(view)[0] = temp[0];
+            times.get(view)[1] = temp[1];
+            times.get(view)[2] = temp[2];
             times.put(view, temp);
         } else {
-            temp[3] = 0;
-            temp[4] = 0;
             times.put(view, temp);
         }
     }
 
     public void updateTimeDisplay(TextView view, int hour, int minute) {
         view.setText("M: " + hour + " S: " + minute);
-        int[] temp = new int[5];
-        temp[3] = hour;
-        temp[4] = minute;
+        int[] temp = new int[2];
+        temp[0] = hour;
+        temp[1] = minute;
         if(times.containsKey(view)) {;
-            temp[0] = times.get(view)[0];
-            temp[1] = times.get(view)[1];
-            temp[2] = times.get(view)[2];
+            times.get(view)[0] = temp[0];
+            times.get(view)[1] = temp[1];
             times.put(view, temp);
         } else {
-            temp[0] = 0;
-            temp[1] = 0;
-            temp[2] = 0;
             times.put(view, temp);
         }
+    }
+
+    private void fillBundle() {
+        ArrayList<Integer> startTime = new ArrayList<Integer>();
+        for (int i : times.get(startTimeDisplay)) {
+            startTime.add(i);
+        }
+        ArrayList<Integer> startDate = new ArrayList<Integer>();
+        for (int i : times.get(startDateDisplay)) {
+            startDate.add(i);
+        }
+        ArrayList<Integer> endTime = new ArrayList<Integer>();
+        for (int i : times.get(endTimeDisplay)) {
+            endTime.add(i);
+        }
+        ArrayList<Integer> endDate = new ArrayList<Integer>();
+        for (int i : times.get(endDateDisplay)) {
+            endDate.add(i);
+        }
+        b.putIntegerArrayList("startTime", startTime);
+        b.putIntegerArrayList("startDate", startDate);
+        b.putIntegerArrayList("endTime", endTime);
+        b.putIntegerArrayList("endDate", endDate);
     }
 }
 
