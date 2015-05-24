@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    android:id="@+id/tableLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:shrinkColumns="*"
+    android:stretchColumns="*"
+    android:showDividers="middle"
+    android:divider="#FFFFFF"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+</TableLayout>

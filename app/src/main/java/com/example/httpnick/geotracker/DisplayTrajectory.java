@@ -2,13 +2,21 @@ package com.example.httpnick.geotracker;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TableRow.LayoutParams;
+import android.widget.TextView;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,9 +35,16 @@ public class DisplayTrajectory extends Activity {
     /** preferences for the current application */
     private SharedPreferences pref;
 
+    private JSONArray points;
+
+    private TableLayout table_layout;
+
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
+        setContentView(R.layout.activity_table);
         Bundle b = getIntent().getExtras();
+        table_layout = (TableLayout) findViewById(R.id.tableLayout1);
+        table_layout.setVisibility(View.INVISIBLE);
         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         ArrayList<Integer> startTime = b.getIntegerArrayList("startTime");
         ArrayList<Integer> startDate = b.getIntegerArrayList("startDate");
@@ -59,6 +74,117 @@ public class DisplayTrajectory extends Activity {
         c.set(Calendar.MILLISECOND, 0);
 
         return (int) (c.getTimeInMillis() / 1000L);
+    }
+
+    private void fillTable() {
+        try {
+            TableRow headerRow = new TableRow(this);
+            headerRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                    LayoutParams.WRAP_CONTENT));
+            headerRow.setPadding(0, 0, 0, 2);
+
+            TableRow.LayoutParams headerLlp = new TableRow.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+            headerLlp.setMargins(0, 0, 2, 0);//2px right-margin
+
+            headerRow.setLayoutParams(headerLlp);
+
+            TextView latHeader = new TextView(this);
+            latHeader.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT));
+            latHeader.setPadding(0, 0, 4, 3);
+            latHeader.setText("Latitude");
+            headerRow.addView(latHeader);
+
+            TextView lonHeader = new TextView(this);
+            lonHeader.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT));
+            lonHeader.setPadding(0, 0, 4, 3);
+            lonHeader.setText("Longitude");
+            headerRow.addView(lonHeader);
+
+            TextView speedHeader = new TextView(this);
+            speedHeader.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT));
+            speedHeader.setPadding(0, 0, 4, 3);
+            speedHeader.setText("Speed");
+            headerRow.addView(speedHeader);
+
+            TextView headingHeader = new TextView(this);
+            headingHeader.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT));
+            headingHeader.setPadding(0, 0, 4, 3);
+            headingHeader.setText("Heading");
+            headerRow.addView(headingHeader);
+
+            TextView timeHeader = new TextView(this);
+            timeHeader.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                    LayoutParams.WRAP_CONTENT));
+            timeHeader.setPadding(0, 0, 4, 3);
+            timeHeader.setText("Time");
+            headerRow.addView(timeHeader);
+
+            table_layout.addView(headerRow);
+
+
+
+            JSONObject o;
+
+
+            for(int i = 0; i < points.length(); i++) {
+                o = points.getJSONObject(i);
+                TableRow row = new TableRow(this);
+                row.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT));
+                row.setPadding(0, 0, 0, 2);
+
+                TableRow.LayoutParams llp = new TableRow.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+                llp.setMargins(0, 0, 2, 0);//2px right-margin
+
+                row.setLayoutParams(llp);
+
+                TextView lat = new TextView(this);
+                lat.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                        LayoutParams.WRAP_CONTENT));
+                lat.setPadding(0, 0, 4, 3);
+                lat.setText((String) o.get("lat"));
+                row.addView(lat);
+
+                TextView lon = new TextView(this);
+                lon.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                        LayoutParams.WRAP_CONTENT));
+                lon.setPadding(0, 0, 4, 3);
+                lon.setText((String) o.get("lon"));
+                row.addView(lon);
+
+                TextView speed = new TextView(this);
+                speed.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                        LayoutParams.WRAP_CONTENT));
+                speed.setPadding(0, 0, 4, 3);
+                speed.setText((String) o.get("speed"));
+                row.addView(speed);
+
+
+                TextView heading = new TextView(this);
+                heading.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                        LayoutParams.WRAP_CONTENT));
+                heading.setPadding(0, 0, 4, 3);
+                heading.setText((String) o.get("heading"));
+                row.addView(heading);
+
+
+                TextView time = new TextView(this);
+                time.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+                        LayoutParams.WRAP_CONTENT));
+                time.setPadding(0, 0, 4, 3);
+                time.setText(String.valueOf(o.get("time")));
+                row.addView(time);
+
+                table_layout.addView(row);
+            }
+            table_layout.setVisibility(View.VISIBLE);
+        } catch(JSONException j) {
+            j.printStackTrace();
+        }
     }
 
     /**
@@ -104,6 +230,8 @@ public class DisplayTrajectory extends Activity {
                 /** Check to make sure the web service successfully processed the post*/
                 String pass = (String) obj.get("result");
                 if (pass.equals("success")) {
+                    points = obj.getJSONArray("points");
+                    fillTable();
                     System.out.println("SUCCESSFULLY PULLED FROM THE WEBSERVICE!!");
                 } else {
                     System.out.println("NO RESULTS");
