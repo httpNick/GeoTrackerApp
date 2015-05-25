@@ -151,5 +151,10 @@
         android:layout_height="wrap_content"
         android:text="View Locations"
         android:id="@+id/viewLocationsButton"/>
+    <Button
+        android:id="@+id/showMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Display Points"/>
 </LinearLayout>
 </ScrollView>

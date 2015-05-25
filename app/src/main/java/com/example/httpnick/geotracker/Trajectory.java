@@ -1,5 +1,6 @@
 package com.example.httpnick.geotracker;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -61,6 +62,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
 
     private HashMap<TextView, int[]> times;
     private Button viewLocations;
+    private Button displayMap;
 
     private TextView startDateDisplay;
     private TextView startTimeDisplay;
@@ -77,6 +79,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
     private TextView activeTimeDisplay;
 
     FragmentActivity that;
+    Activity a;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -87,6 +90,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         startTimeDisplay = (TextView) findViewById(R.id.startTimeText);
         startPickDate = (Button) findViewById(R.id.trajectoryDatePickButton);
         startPickTime = (Button) findViewById(R.id.trajectoryTimeButton);
+        displayMap = (Button) findViewById(R.id.showMap);
 
         endDateDisplay = (TextView) findViewById(R.id.endDateText);
         endTimeDisplay = (TextView) findViewById(R.id.endTimeText);
@@ -95,7 +99,10 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
 
         times = new HashMap<TextView, int[]>();
         that = this;
+        a = this;
         b = new Bundle();
+
+
 
         viewLocations.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -151,6 +158,19 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
             }
         });
 
+        endPickTime.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                showTimePickerDialog(endTimeDisplay);
+            }
+        });
+
+
+        displayMap.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(that.getBaseContext(), DisplayMap.class);
+                startActivity(i);
+            }
+        });
 
         serviceIntent = new Intent(this, GPSService.class);
 

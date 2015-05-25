@@ -33,6 +33,11 @@
             android:label="@string/app_name" >
         </activity>
         <activity
+            android:name=".DisplayMap"
+            android:label="DisplayMap">
+            </activity>
+
+        <activity
             android:name=".TermsOfUse"
             android:label="TermsOfUse" >
             </activity>
