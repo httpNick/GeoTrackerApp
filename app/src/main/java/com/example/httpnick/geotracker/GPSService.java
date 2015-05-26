@@ -189,9 +189,9 @@ public class GPSService extends Service {
                                             cursor.getDouble(4),
                                             cursor.getFloat(5),
                                             cursor.getLong(6));
-                                    DB_URL = "http://450.atwebpages.com/logAdd.php?lat="+Math.round(lp.latitude*10)/10+
-                                            "&lon="+Math.round(lp.longitude*10)/10+"&speed="+lp.speed+
-                                            "&heading="+Math.round(lp.heading*10)/10+"&timestamp="+lp.time+
+                                    DB_URL = "http://450.atwebpages.com/logAdd.php?lat="+Math.round((double) lp.latitude*10)/10+
+                                            "&lon="+Math.round((double) lp.longitude*10)/10+"&speed="+lp.speed+
+                                            "&heading="+Math.round((float) lp.heading*10)/10+"&timestamp="+lp.time+
                                             "&source=" + lp.id;
                                     DownloadWebPageTask task = new DownloadWebPageTask();
                                     task.execute(new String[]{DB_URL});

@@ -2,12 +2,11 @@ package com.example.httpnick.geotracker;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
@@ -39,12 +38,21 @@ public class DisplayTrajectory extends Activity {
 
     private TableLayout table_layout;
 
+    private ArrayList<LocationPackage> lps;
+
+    private ListView locationListView;
+
+    private LocationAdapter la;
+
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         setContentView(R.layout.activity_table);
+        lps = new ArrayList<LocationPackage>();
+        locationListView = (ListView) findViewById(R.id.loc_list_view);
+        la = new LocationAdapter(this, lps);
         Bundle b = getIntent().getExtras();
-        table_layout = (TableLayout) findViewById(R.id.tableLayout1);
-        table_layout.setVisibility(View.INVISIBLE);
+        //table_layout = (TableLayout) findViewById(R.id.tableLayout1);
+        //table_layout.setVisibility(View.INVISIBLE);
         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         ArrayList<Integer> startTime = b.getIntegerArrayList("startTime");
         ArrayList<Integer> startDate = b.getIntegerArrayList("startDate");
@@ -231,7 +239,15 @@ public class DisplayTrajectory extends Activity {
                 String pass = (String) obj.get("result");
                 if (pass.equals("success")) {
                     points = obj.getJSONArray("points");
-                    fillTable();
+                    for(int i = 0; i < points.length(); i++) {
+                        JSONObject o = points.getJSONObject(i);
+                        LocationPackage lp = new LocationPackage(o.getString("heading"),
+                                o.getString("lon"), o.getString("lat"),
+                                o.getString("speed"), o.getString("time"));
+                        lps.add(lp);
+                    }
+
+                    //fillTable();
                     System.out.println("SUCCESSFULLY PULLED FROM THE WEBSERVICE!!");
                 } else {
                     System.out.println("NO RESULTS");
@@ -239,6 +255,9 @@ public class DisplayTrajectory extends Activity {
 
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+            if (!lps.isEmpty()) {
+                locationListView.setAdapter(la);
             }
         }
     }

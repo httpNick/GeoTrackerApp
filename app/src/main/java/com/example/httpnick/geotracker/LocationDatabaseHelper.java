@@ -66,12 +66,12 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
      */
     public long insertLocation(LocationPackage locpack) {
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_LOCATION_id, locpack.id);
-        cv.put(COLUMN_LOCATION_HEADING, locpack.heading);
-        cv.put(COLUMN_LOCATION_lat, locpack.latitude);
-        cv.put(COLUMN_LOCATION_SPEED, locpack.speed);
-        cv.put(COLUMN_LOCATION_long, locpack.longitude);
-        cv.put(COLUMN_LOCATION_TIMESTAMP, locpack.time);
+        cv.put(COLUMN_LOCATION_id, (String) locpack.id);
+        cv.put(COLUMN_LOCATION_HEADING, (float) locpack.heading);
+        cv.put(COLUMN_LOCATION_lat, (double) locpack.latitude);
+        cv.put(COLUMN_LOCATION_SPEED, (float) locpack.speed);
+        cv.put(COLUMN_LOCATION_long, (double) locpack.longitude);
+        cv.put(COLUMN_LOCATION_TIMESTAMP, (long) locpack.time);
         return getWritableDatabase().insert(TABLE_LOCATION, null, cv);
     }
 
