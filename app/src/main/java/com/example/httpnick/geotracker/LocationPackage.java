@@ -10,11 +10,11 @@ import java.util.TimeZone;
  */
 public class LocationPackage {
     String id;
-    float heading;
-    double longitude;
-    double latitude;
-    float speed;
-    long time;
+    Object heading;
+    Object longitude;
+    Object latitude;
+    Object speed;
+    Object time;
 
 
     /**
@@ -37,13 +37,23 @@ public class LocationPackage {
 
     }
 
+    public LocationPackage(String heading, String longitude, String latitude,
+                           String speed, String time) {
+
+        this.heading = heading;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.speed = speed;
+        this.time = time;
+    }
+
     /**
      * toString method the prints a nice view of the users location,.
      * @return A string of a locaiton point of the user
      */
     @Override
     public String toString() {
-        long unixSeconds = time;
+        long unixSeconds = (long) time;
         Date date = new Date(unixSeconds*1000L);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
         sdf.setTimeZone(TimeZone.getTimeZone("GMT-4"));
