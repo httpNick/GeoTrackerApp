@@ -167,8 +167,31 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
 
         displayMap.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent i = new Intent(that.getBaseContext(), DisplayMap.class);
-                startActivity(i);
+                if(startDateDisplay.getText().length() > 0 &&
+                        startTimeDisplay.getText().length() > 0 &&
+                        endDateDisplay.getText().length() > 0 &&
+                        endTimeDisplay.getText().length() > 0) {
+                    fillBundle();
+                    Intent i = new Intent(that.getBaseContext(), DisplayMap.class);
+                    i.putExtras(b);
+                    startActivity(i);
+                } else {
+                    new AlertDialog.Builder(that)
+                            .setTitle("Incomplete form")
+                            .setMessage("Please complete all dates/times first.")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // continue with delete
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
             }
         });
 
