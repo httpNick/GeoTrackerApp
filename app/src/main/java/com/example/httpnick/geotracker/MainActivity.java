@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -29,7 +30,7 @@ import java.io.InputStreamReader;
  * Class used for the main activity of this app.
  * @author Nick Duncan
  */
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends FragmentActivity {
     private Button register;
     private Button login;
     private SharedPreferences pref;
