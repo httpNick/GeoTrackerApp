@@ -81,6 +81,9 @@ public class DisplayMap extends FragmentActivity implements OnMapReadyCallback {
         map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
     }
 
+    /**
+     * Pull location points from the Web service and plot them on the map.
+     */
     private void plotPoints() {
         for(int i = 0; i < points.length(); i++) {
             try {
