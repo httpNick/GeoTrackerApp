@@ -30,6 +30,7 @@ import java.util.Calendar;
 /**
  * A FragmentActivity that will be used to display GoogleMap markers.
  * @author Matthew Moore
+ * @author Jon Sobocinski
  * 5/25/15.
  */
 public class DisplayMap extends FragmentActivity implements OnMapReadyCallback {
@@ -77,15 +78,7 @@ public class DisplayMap extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap map) {
         this.map = map;
         map.setMyLocationEnabled(true);
-//        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-//        map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-//            @Override
-//            public void onMyLocationChange(Location location) {
-//                lat = location.getLatitude();
-//                lon = location.getLongitude();
-//
-//            }
-//        });
+        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
     }
 
     private void plotPoints() {
