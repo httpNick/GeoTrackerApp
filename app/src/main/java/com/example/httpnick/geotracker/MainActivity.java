@@ -150,7 +150,8 @@ public class MainActivity extends FragmentActivity {
             } catch (JSONException e) {
                 new AlertDialog.Builder(ma)
                         .setTitle("Incorrect login credentials")
-                        .setMessage("Please re-enter your email and password.")
+                        .setMessage("Please re-enter your email and password." +
+                                "If you have not verified your email address, do so before trying to login in again ")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // continue with delete

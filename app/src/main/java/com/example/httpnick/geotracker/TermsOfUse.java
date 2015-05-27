@@ -37,12 +37,14 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import android.renderscript.Element;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * A class that displays Terms of Use conditions that are pulled from the Web.
  * @author Nick Duncan
  */
 public class TermsOfUse extends ActionBarActivity {
+
     private Button acceptButton;
     private Button declineButton;
     private Node node;
@@ -51,6 +53,7 @@ public class TermsOfUse extends ActionBarActivity {
     private Element root;
     private ProgressDialog progressDialog;
     private TextView userAgreement;
+    TermsOfUse terms;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,7 @@ public class TermsOfUse extends ActionBarActivity {
         userAgreement = (TextView) findViewById(R.id.terms);
         acceptButton = (Button) findViewById(R.id.acceptTerms);
         declineButton = (Button) findViewById(R.id.declineTerms);
+        terms = this;
 
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +76,11 @@ public class TermsOfUse extends ActionBarActivity {
         declineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Toast.makeText(terms.getBaseContext(), "Registration canceled due to the " +
+                        "terms of service was declined.", Toast.LENGTH_SHORT)
+                        .show();
+
                 Intent i = new Intent(v.getContext(), MainActivity.class);
                 startActivity(i);
                 finish();
@@ -79,6 +88,8 @@ public class TermsOfUse extends ActionBarActivity {
         });
 
     }
+
+
 
     @Override
     public void onStart() {
