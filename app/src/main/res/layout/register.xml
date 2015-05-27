@@ -37,8 +37,7 @@
             android:hint="@string/email_hint"
             android:ems="10"
             android:backgroundTint="#90ffffff"
-            android:textColor="#d6d6d6"
-            android:focusableInTouchMode="false" />
+            android:textColor="#d6d6d6" />
         <EditText
             android:id="@+id/passwordOne"
             android:layout_width="match_parent"
@@ -76,8 +75,7 @@
             android:hint="Answer"
             android:ems="10"
             android:backgroundTint="#90ffffff"
-            android:textColor="#d6d6d6"
-            android:text="addd" />
+            android:textColor="#d6d6d6" />
         <Button
             android:id="@+id/registerButton"
             android:layout_width="wrap_content"

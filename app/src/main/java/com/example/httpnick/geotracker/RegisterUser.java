@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.cert.CertificateNotYetValidException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,7 +56,7 @@ public class RegisterUser extends Activity {
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         secAnswer = (EditText) findViewById(R.id.securityAnswer);
         question = (TextView) findViewById(R.id.securityQuestion);
-        ma = this;
+         ma = this;
 
         regButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,11 +88,20 @@ public class RegisterUser extends Activity {
                     startActivity(i);
                     finish();
                 } else {
+
+                    String message;
+
+                    if(!isEmailValid(email.getText().toString())) {
+                        message = "Email is not in correct format.";
+                    } else if(!passwordOne.getText().toString().equals(passwordTwo.getText().toString())){
+                        message = "Passwords do not match.";
+                    } else {
+                        message = "Password is not in between 5 and 10 characters.";
+                    }
+
                     new AlertDialog.Builder(ma)
                             .setTitle("Please try again:")
-                            .setMessage("Either email is not in correct format, " +
-                                    "password is not inbetween 5 and 10 characters, " +
-                                    "or passwords do not match up.")
+                            .setMessage(message)
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     // continue with delete
@@ -125,6 +135,7 @@ public class RegisterUser extends Activity {
         if (matcher.matches()) {
             isValid = true;
         }
+
         return isValid;
     }
 
