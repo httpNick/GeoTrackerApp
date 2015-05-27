@@ -1,5 +1,7 @@
 package com.example.httpnick.geotracker;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -18,12 +20,20 @@ import android.widget.TextView;
  */
 public class UserAccount extends ActionBarActivity {
     SharedPreferences prefs;
+
+    /** Reference to the sqlite db helper for this app*/
+    private LocationDatabaseHelper db;
+
+    ActionBarActivity that;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        that = this;
         setContentView(R.layout.activity_user_account);
         Button traj = (Button) findViewById(R.id.trajectoryButton);
         Button logout = (Button) findViewById(R.id.logoutButton);
+        db = new LocationDatabaseHelper(getApplicationContext());
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         TextView loggedInEmail = (TextView) findViewById(R.id.currentlyLoggedInEmail);
@@ -42,15 +52,31 @@ public class UserAccount extends ActionBarActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (isMyServiceRunning(GPSService.class)) {
+                    Intent serviceIntent = new Intent(that, GPSService.class);
+                    stopService(serviceIntent);
+                }
                 prefs.edit().putBoolean("loggedIn", false).commit();
                 //prefs.edit().putString("userid", "default").commit();
                 prefs.edit().remove("userid").commit();
+                db.clearDatabase();
                 Intent i = new Intent(v.getContext(), MainActivity.class);
                 startActivity(i);
                 finish();
             }
         });
          //
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 // THIS CREATES THE OPTIONS THING AT THE TOP RIGHT.
