@@ -1,85 +1,69 @@
 package com.example.httpnick.geotracker;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * A class that displays the GPS coordinate information.
+ * A class that lets the user choose a start/end date that they want to see their locations for.
+ * There is an option for displaying on a map as well as an option to display in a list.
+ * This activity also has a switch to start/stop the tracking service.
+ * A button is also available to manually push data to the web service.
  * @author Nick Duncan
  */
 public class Trajectory extends FragmentActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
+    /** Reference to the location tracking service */
     Intent serviceIntent;
-    private LocationDatabaseHelper db;
+    /** Bundle to be sent to other activities with start/end points saved */
     Bundle b;
+    /** Reference to the SharedPreferences for this app */
     SharedPreferences sp;
-
+    /** A map to hold start/end times for each TextView. */
     private HashMap<TextView, int[]> times;
+    /** View location button */
     private Button viewLocations;
+    /** display map button*/
     private Button displayMap;
-
+    /** Text view for the start date */
     private TextView startDateDisplay;
+    /** Text view for the start time */
     private TextView startTimeDisplay;
+    /** Button to open a start date picker */
     private Button startPickDate;
+    /** Button to open a start time picker */
     private Button startPickTime;
-
+    /** Text view for the end date */
     private TextView endDateDisplay;
+    /** Text view for the end time */
     private TextView endTimeDisplay;
+    /** Button to open a end date picker */
     private Button endPickDate;
+    /** Button to open a end time picker */
     private Button endPickTime;
-
-
+    /** Reference to most active date text view */
     private TextView activeDateDisplay;
+    /** Reference to most active time text view */
     private TextView activeTimeDisplay;
-
-    FragmentActivity that;
-    Activity a;
+    /** Reference to this for private inner class */
+    private FragmentActivity that;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,25 +75,28 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         startPickDate = (Button) findViewById(R.id.trajectoryDatePickButton);
         startPickTime = (Button) findViewById(R.id.trajectoryTimeButton);
         displayMap = (Button) findViewById(R.id.showMap);
-
         endDateDisplay = (TextView) findViewById(R.id.endDateText);
         endTimeDisplay = (TextView) findViewById(R.id.endTimeText);
         endPickDate = (Button) findViewById(R.id.trajectoryEndDatePickButton);
         endPickTime = (Button) findViewById(R.id.trajectoryEndTimeButton);
 
-        times = new HashMap<TextView, int[]>();
+        times = new HashMap<>();
         that = this;
-        a = this;
         b = new Bundle();
 
-
-
         viewLocations.setOnClickListener(new View.OnClickListener() {
+            /**
+             * button to take the user to a list of their points in between two start/end times.
+             * @param v current view
+             */
             public void onClick(View v) {
+                // Ensure all text views are filled.
+                // NEEDED TO BE ADDED: CHECK TO MAKE START DATE IS LESS THAN END DATE!!
                 if(startDateDisplay.getText().length() > 0 &&
                         startTimeDisplay.getText().length() > 0 &&
                         endDateDisplay.getText().length() > 0 &&
                         endTimeDisplay.getText().length() > 0) {
+                    // Method call that fills the bundle to be sent to the next activity.
                     fillBundle();
                     Intent i = new Intent(that.getBaseContext(), DisplayTrajectory.class);
                     i.putExtras(b);
@@ -134,6 +121,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
             }
         });
 
+        /**---------- On click listeners to open up the start/end date/time pickers --------------*/
         startPickDate.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showDatePickerDialog(startDateDisplay);
@@ -163,6 +151,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
                 showTimePickerDialog(endTimeDisplay);
             }
         });
+        /** ------------------------------------------------------------------------------------- */
 
 
         displayMap.setOnClickListener(new View.OnClickListener() {
@@ -216,29 +205,6 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
     protected void onStart() {
         super.onStart();
         sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        db = new LocationDatabaseHelper(getApplicationContext());
-        Cursor cursor = db.querySingleUser(sp.getString("userid", "default"));
-        LocationPackage array[] = new LocationPackage[cursor.getCount()];
-        int i = 0;
-
-        cursor.moveToFirst();
-        StringBuilder sb = new StringBuilder();
-        while (cursor.isAfterLast() == false) {
-            LocationPackage lp = new LocationPackage(cursor.getString(1),
-                    cursor.getFloat(2),
-                    cursor.getDouble(3),
-                    cursor.getDouble(4),
-                    cursor.getFloat(5),
-                    cursor.getLong(6));
-            array[i] = lp;
-            //System.out.println(array[i]); //display this on screen
-            //sb.append(array[i]+"\n" + "\n");
-
-            i++;
-            cursor.moveToNext();
-        }
-        //userTextView.setText(sb.toString());
-
         ToggleButton theSwitch = (ToggleButton) findViewById(R.id.switchGPS);
 
         if (isMyServiceRunning(GPSService.class)) {
@@ -248,6 +214,12 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         }
 
     }
+
+    /**
+     * Checks to see if a service is currently running on the device.
+     * @param serviceClass class of the service you want to check.
+     * @return true or false (is the service running?)
+     */
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -257,6 +229,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         }
         return false;
     }
+
     public void showTimePickerDialog(TextView v) {
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.show(this.getFragmentManager(), "timePicker");
@@ -297,7 +270,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         int[] temp = new int[2];
         temp[0] = hour;
         temp[1] = minute;
-        if(times.containsKey(view)) {;
+        if(times.containsKey(view)) {
             times.get(view)[0] = temp[0];
             times.get(view)[1] = temp[1];
             times.put(view, temp);
@@ -306,20 +279,23 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         }
     }
 
+    /**
+     * method that fills bundle to be sent to next activity.
+     */
     private void fillBundle() {
-        ArrayList<Integer> startTime = new ArrayList<Integer>();
+        ArrayList<Integer> startTime = new ArrayList<>();
         for (int i : times.get(startTimeDisplay)) {
             startTime.add(i);
         }
-        ArrayList<Integer> startDate = new ArrayList<Integer>();
+        ArrayList<Integer> startDate = new ArrayList<>();
         for (int i : times.get(startDateDisplay)) {
             startDate.add(i);
         }
-        ArrayList<Integer> endTime = new ArrayList<Integer>();
+        ArrayList<Integer> endTime = new ArrayList<>();
         for (int i : times.get(endTimeDisplay)) {
             endTime.add(i);
         }
-        ArrayList<Integer> endDate = new ArrayList<Integer>();
+        ArrayList<Integer> endDate = new ArrayList<>();
         for (int i : times.get(endDateDisplay)) {
             endDate.add(i);
         }
