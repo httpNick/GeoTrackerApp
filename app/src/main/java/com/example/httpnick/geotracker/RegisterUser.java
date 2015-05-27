@@ -166,7 +166,8 @@ public class RegisterUser extends Activity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(ma.getBaseContext(), "Account created Successfully!", Toast.LENGTH_SHORT)
+            Toast.makeText(ma.getBaseContext(), "Account created Successfully!  " +
+                    "A verification email has been sent to your address.", Toast.LENGTH_SHORT)
                     .show();
         }
     }
