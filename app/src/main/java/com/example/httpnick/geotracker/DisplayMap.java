@@ -11,6 +11,7 @@ import android.widget.ListView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -35,7 +36,9 @@ import java.util.Calendar;
  */
 public class DisplayMap extends FragmentActivity implements OnMapReadyCallback {
 
+    /** Fields */
     private SharedPreferences pref;
+
     private MapFragment mapFragment;
     private double lat;
     private double lon;
@@ -52,13 +55,17 @@ public class DisplayMap extends FragmentActivity implements OnMapReadyCallback {
     public void onCreate(Bundle savedInstance){
         super.onCreate(savedInstance);
         Bundle b = getIntent().getExtras();
+
         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
         ArrayList<Integer> startTime = b.getIntegerArrayList("startTime");
         ArrayList<Integer> startDate = b.getIntegerArrayList("startDate");
         ArrayList<Integer> endTime = b.getIntegerArrayList("endTime");
         ArrayList<Integer> endDate = b.getIntegerArrayList("endDate");
+
         int startUnix = componentTimeToTimestamp(startDate.get(0), startDate.get(1), startDate.get(2),
                 startTime.get(0), startTime.get(1));
+
         int endUnix = componentTimeToTimestamp(endDate.get(0), endDate.get(1), endDate.get(2),
                 endTime.get(0), endTime.get(1));
         String DB_URL = "http://450.atwebpages.com/view.php?uid="+pref.getString("userid", "default")+
@@ -72,13 +79,22 @@ public class DisplayMap extends FragmentActivity implements OnMapReadyCallback {
     }
 
     /**
-     *
+     * Implemented from OnMapReadyCallback. Initializes a global GoogleMap object to be used to display
+     * points.
      * @param map
      */
     public void onMapReady(GoogleMap map) {
         this.map = map;
-        map.setMyLocationEnabled(true);
-        map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+        //Control Google Map UI Settings
+        UiSettings uiSettings = this.map.getUiSettings();
+        uiSettings.setZoomControlsEnabled(true);
+        uiSettings.setMyLocationButtonEnabled(true);
+        uiSettings.setCompassEnabled(true);
+        this.map.setMyLocationEnabled(true);
+
+        //Set map type
+        this.map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
     }
 
     /**
@@ -87,7 +103,6 @@ public class DisplayMap extends FragmentActivity implements OnMapReadyCallback {
     private void plotPoints() {
         for(int i = 0; i < points.length(); i++) {
             try {
-
                 JSONObject o = points.getJSONObject(i);
                 lat = o.getDouble("lat");
                 lon = o.getDouble("lon");
@@ -99,9 +114,17 @@ public class DisplayMap extends FragmentActivity implements OnMapReadyCallback {
                 //Do nothing
             }
         }
-
     }
 
+    /**
+     *
+     * @param year
+     * @param month
+     * @param day
+     * @param hour
+     * @param minute
+     * @return
+     */
     int componentTimeToTimestamp(int year, int month, int day, int hour, int minute) {
 
         Calendar c = Calendar.getInstance();
@@ -123,12 +146,20 @@ public class DisplayMap extends FragmentActivity implements OnMapReadyCallback {
     private class DownloadWebPageTask extends AsyncTask<String, Void, String> {
 
 
+        /**
+         *
+         */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
 
 
+        /**
+         *
+         * @param urls
+         * @return
+         */
         @Override
         protected String doInBackground(String... urls) {
             String response = "";
@@ -152,6 +183,11 @@ public class DisplayMap extends FragmentActivity implements OnMapReadyCallback {
             return response;
         }
 
+
+        /**
+         * Grab points from the Web-service and load them int a JSON Array.
+         * @param result
+         */
         @Override
         protected void onPostExecute(String result) {
             try {
