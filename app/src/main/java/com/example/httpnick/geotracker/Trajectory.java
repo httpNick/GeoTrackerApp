@@ -16,15 +16,19 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A class that lets the user choose a start/end date that they want to see their locations for.
@@ -102,13 +106,13 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
      * Reference to this for private inner class
      */
     private FragmentActivity that;
-    /** Reference to location rate edit text*/
-    private EditText locationRate;
-    /** Reference to location rate edit text change button*/
-    private Button locationRateButton;
-    /**
-     * GPSService
-     */
+    /** Reference to locationIntervalSpinner*/
+    Spinner locationIntervalSpin;
+
+    /**Array for location intervals*/
+    List<Long> locationIntervals;
+
+    /**GPSService service*/
     GPSService myService;
     boolean bound = false;
 
@@ -146,60 +150,69 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         endTimeDisplay = (TextView) findViewById(R.id.endTimeText);
         endPickDate = (Button) findViewById(R.id.trajectoryEndDatePickButton);
         endPickTime = (Button) findViewById(R.id.trajectoryEndTimeButton);
-        locationRate = (EditText) findViewById(R.id.locationRate);
-        locationRateButton = (Button) findViewById(R.id.changeLocationRate);
+        locationIntervalSpin = (Spinner) findViewById(R.id.locationIntervalSpin);
+        fillSpinners();
+        ArrayAdapter<Long> locSpinAdapter = new ArrayAdapter<Long>(
+                this, android.R.layout.simple_spinner_item, locationIntervals);
+        locSpinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        locationIntervalSpin.setAdapter(locSpinAdapter);
 
         times = new HashMap<>();
         that = this;
         b = new Bundle();
 
         serviceIntent = new Intent(this, GPSService.class);
-        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
 
-        locationRateButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String s = locationRate.toString();
-                myService.setLocalInterval(Long.getLong(s));
-                System.out.println("SET TO " + Long.getLong(s));
-            }
-        });
-
-        viewLocations.setOnClickListener(new View.OnClickListener() {
-            /**
-             * button to take the user to a list of their points in between two start/end times.
-             * @param v current view
-             */
-            public void onClick(View v) {
-                // Ensure all text views are filled.
-                // NEEDED TO BE ADDED: CHECK TO MAKE START DATE IS LESS THAN END DATE!!
-                if (startDateDisplay.getText().length() > 0 &&
-                        startTimeDisplay.getText().length() > 0 &&
-                        endDateDisplay.getText().length() > 0 &&
-                        endTimeDisplay.getText().length() > 0) {
-                    // Method call that fills the bundle to be sent to the next activity.
-                    fillBundle();
-                    Intent i = new Intent(that.getBaseContext(), DisplayTrajectory.class);
-                    i.putExtras(b);
-                    startActivity(i);
-                } else {
-                    new AlertDialog.Builder(that)
-                            .setTitle("Incomplete form")
-                            .setMessage("Please complete all dates/times first.")
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // continue with delete
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    // do nothing
-                                }
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
+        locationIntervalSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (bound) {
+                    myService.setLocalInterval((long) locationIntervalSpin.getItemAtPosition(position));
+                    System.out.println(myService.getLocalInterval());
                 }
             }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
+                viewLocations.setOnClickListener(new View.OnClickListener() {
+                    /**
+                     * button to take the user to a list of their points in between two start/end times.
+                     * @param v current view
+                     */
+                    public void onClick(View v) {
+                        // Ensure all text views are filled.
+                        // NEEDED TO BE ADDED: CHECK TO MAKE START DATE IS LESS THAN END DATE!!
+                        if (startDateDisplay.getText().length() > 0 &&
+                                startTimeDisplay.getText().length() > 0 &&
+                                endDateDisplay.getText().length() > 0 &&
+                                endTimeDisplay.getText().length() > 0) {
+                            // Method call that fills the bundle to be sent to the next activity.
+                            fillBundle();
+                            Intent i = new Intent(that.getBaseContext(), DisplayTrajectory.class);
+                            i.putExtras(b);
+                            startActivity(i);
+                        } else {
+                            new AlertDialog.Builder(that)
+                                    .setTitle("Incomplete form")
+                                    .setMessage("Please complete all dates/times first.")
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // continue with delete
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // do nothing
+                                        }
+                                    })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+                        }
+                    }
+                });
 
         /**---------- On click listeners to open up the start/end date/time pickers --------------*/
         startPickDate.setOnClickListener(new View.OnClickListener() {
@@ -263,6 +276,16 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
                 }
             }
         });
+        sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        ToggleButton theSwitch = (ToggleButton) findViewById(R.id.switchGPS);
+
+        if (isMyServiceRunning(GPSService.class)) {
+            theSwitch.setChecked(true);
+            locationIntervalSpin.setVisibility(View.VISIBLE);
+        } else {
+            theSwitch.setChecked(false);
+            locationIntervalSpin.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -272,30 +295,34 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         // Toggled on?
         if (on) {
             startService(serviceIntent);
+            bindService(serviceIntent, mConnection, Context.BIND_NOT_FOREGROUND);
+            locationIntervalSpin.setVisibility(View.VISIBLE);
             // Toggled off?
         } else {
             stopService(serviceIntent);
+            locationIntervalSpin.setVisibility(View.INVISIBLE);
         }
     }
 
 
 
-    @Override
+   /* @Override
     protected void onStart() {
         super.onStart();
         sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         ToggleButton theSwitch = (ToggleButton) findViewById(R.id.switchGPS);
 
         if (isMyServiceRunning(GPSService.class)) {
+            System.out.println("SET TO CHECKED!!!");
             theSwitch.setChecked(true);
         } else {
             theSwitch.setChecked(false);
         }
 
-    }
+    } */
 
     @Override
-    protected  void onStop() {
+    protected void onStop() {
         super.onStop();
         if(bound) {
             unbindService(mConnection);
@@ -391,5 +418,14 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         b.putIntegerArrayList("endTime", endTime);
         b.putIntegerArrayList("endDate", endDate);
     }
+
+    private void fillSpinners() {
+        locationIntervals = new ArrayList<>();
+        for (int i = 10; i <= 300; i += 5) {
+            locationIntervals.add((long) i);
+        }
+    }
+
+
 }
 

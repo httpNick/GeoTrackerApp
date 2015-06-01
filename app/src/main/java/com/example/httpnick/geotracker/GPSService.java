@@ -43,21 +43,21 @@ public class GPSService extends Service {
     /** LocationManager to manage location functionality.*/
     private LocationManager mLocationManager;
     /** Interval to pull locations and place into local sqlite DB*/
-    private long LOCATION_INTERVAL = 6000; //6 seconds
+    private long LOCATION_INTERVAL = 10000; //10 seconds
     /** Interval to push local sqlite DB contents to the web service. */
     private long PUSH_NETWORK_INTERVAL = 60000;
     /** Distance in which to look for a change.*/
     private static final int LOCATION_DISTANCE = 0;
     /** Reference to the sqlite db helper for this app*/
     private LocationDatabaseHelper db;
-    /** broadcast manager for notifying users*/
-    private LocalBroadcastManager broadcastManager;
     /** URL to be used to push data to web service*/
     private String DB_URL;
 
     Timer timer;
 
-    Handler handler;
+    final Handler handler = new Handler();
+
+    TimerTask doAsynchronousTask;
 
     /** Binder */
     private final IBinder mBinder = new LocalBinder();
@@ -148,16 +148,11 @@ public class GPSService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         Log.i(TAG, "service starting");
+        setup();
         return START_STICKY;
     }
-    /**
-     * Method that trys to start a broadcast maneger and get the network provider as well as location.
-     * Written to catch errors when there is known provider or location available
-     */
-    @Override
-    public void onCreate() {
-        broadcastManager = LocalBroadcastManager.getInstance(this);
-        Log.e(TAG, "onCreate");
+
+    private void setup() {
         initializeLocationManager();
         // get reference to local db to be used by the service.
         db = new LocationDatabaseHelper(getApplicationContext());
@@ -176,18 +171,84 @@ public class GPSService extends Service {
             mLocationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
                     mLocationListeners[0]);
-            handler = new Handler();
             // Timer to be used to send off data to web service at given interval.
             timer = new Timer();
-            timer.schedule(doAsynchronousTask, 0, PUSH_NETWORK_INTERVAL);
+            doAsynchronousTask = new myWebPushTask();
+            timer.schedule(doAsynchronousTask, PUSH_NETWORK_INTERVAL, PUSH_NETWORK_INTERVAL);
         } catch (java.lang.SecurityException ex) {
             Log.i(TAG, "fail to request location update, ignore", ex);
         } catch (IllegalArgumentException ex) {
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
     }
+    /**
+     * Removes the location listeners
+     */
+    @Override
+    public void onDestroy() {
+        Log.e(TAG, "onDestroy");
+        super.onDestroy();
+        if (mLocationManager != null) {
+            for (int i = 0; i < mLocationListeners.length; i++) {
+                try {
+                    mLocationManager.removeUpdates(mLocationListeners[i]);
+                } catch (Exception ex) {
+                    Log.i(TAG, "fail to remove location listeners, ignore", ex);
+                }
+            }
+        }
+        timer.cancel();
+        timer.purge();
+        doAsynchronousTask.cancel();
+    }
+    /**
+     * Starts the location manager
+     */
+    private void initializeLocationManager() {
+        Log.e(TAG, "initializeLocationManager");
+        if (mLocationManager == null) {
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        }
+    }
 
-    TimerTask doAsynchronousTask = new TimerTask() {
+    /**-------------------- Getters and setters --------------------------------------------*/
+    public void setLocalInterval(long newInterval) {
+        LOCATION_INTERVAL = newInterval * 1000;
+        if (mLocationManager != null) {
+            for (int i = 0; i < mLocationListeners.length; i++) {
+                try {
+                    mLocationManager.removeUpdates(mLocationListeners[i]);
+                } catch (Exception ex) {
+                    Log.i(TAG, "fail to remove location listeners, ignore", ex);
+                }
+            }
+        }
+        timer.cancel();
+        timer.purge();
+        boolean actuallyCanceled = false;
+        while (!actuallyCanceled) {
+            System.out.println("DID IT CANCEL YET????!!");
+            if (doAsynchronousTask.cancel()) {
+                actuallyCanceled = true;
+            }
+        }
+        setup();
+    }
+    public long getLocalInterval() {
+        return LOCATION_INTERVAL;
+    }
+
+    public void setNetworkInterval(long newInterval) {
+        PUSH_NETWORK_INTERVAL = newInterval;
+        timer.cancel();
+        timer.purge();
+        //timer.schedule(doAsynchronousTask, 0, PUSH_NETWORK_INTERVAL);
+    }
+
+    /**
+     * Private class for timertask.
+     */
+    private class myWebPushTask extends TimerTask {
         @Override
         public void run() {
             handler.post(new Runnable() {
@@ -221,9 +282,9 @@ public class GPSService extends Service {
                             //sendResult(array[i].toString());
                             i++;
                             cursor.moveToNext();
-                            System.out.println("PUSHED TO THE NETWORK!!!");
-                            db.clearDatabase();
                         }
+                        System.out.println("PUSHED TO THE NETWORK!!!");
+                        db.clearDatabase();
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -231,74 +292,6 @@ public class GPSService extends Service {
                 }
             });
         }
-    };
-    /**
-     * Removes the location listeners
-     */
-    @Override
-    public void onDestroy() {
-        Log.e(TAG, "onDestroy");
-        super.onDestroy();
-        if (mLocationManager != null) {
-            for (int i = 0; i < mLocationListeners.length; i++) {
-                try {
-                    mLocationManager.removeUpdates(mLocationListeners[i]);
-                } catch (Exception ex) {
-                    Log.i(TAG, "fail to remove location listeners, ignore", ex);
-                }
-            }
-        }
-    }
-    /**
-     * Starts the location manager
-     */
-    private void initializeLocationManager() {
-        Log.e(TAG, "initializeLocationManager");
-        if (mLocationManager == null) {
-            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        }
-    }
-
-    /**-------------------- Getters and setters --------------------------------------------*/
-    public void setLocalInterval(long newInterval) {
-        LOCATION_INTERVAL = newInterval;
-        if (mLocationManager != null) {
-            for (int i = 0; i < mLocationListeners.length; i++) {
-                try {
-                    mLocationManager.removeUpdates(mLocationListeners[i]);
-                } catch (Exception ex) {
-                    Log.i(TAG, "fail to remove location listeners, ignore", ex);
-                }
-            }
-        }
-        initializeLocationManager();
-        try {
-            // start to request location updates to grab (provided by the network).
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[1]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
-        }
-        try {
-            // start to request location updates to grab (provided by GPS).
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[0]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
-        }
-    }
-
-    public void setNetworkInterval(long newInterval) {
-        PUSH_NETWORK_INTERVAL = newInterval;
-        timer.cancel();
-        timer.purge();
-        timer.schedule(doAsynchronousTask, 0, PUSH_NETWORK_INTERVAL);
     }
     /**
      * Running the loading of the JSON in a separate thread.
