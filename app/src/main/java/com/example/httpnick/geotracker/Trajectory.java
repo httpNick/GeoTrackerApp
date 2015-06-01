@@ -20,7 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -109,8 +109,17 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
     /** Reference to locationIntervalSpinner*/
     Spinner locationIntervalSpin;
 
+    /**Reference to networkIntervalSpinner*/
+    Spinner networkIntervalSpin;
+
     /**Array for location intervals*/
     List<Long> locationIntervals;
+
+    /**Array for network intervals*/
+    List<Long> networkIntervals;
+
+    /**Reference to the relative layout that holds location/network pulling intervals.*/
+    RelativeLayout intervalLayout;
 
     /**GPSService service*/
     GPSService myService;
@@ -137,8 +146,9 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
     };
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onStart() {
+        //super.onCreate(savedInstanceState);
+        super.onStart();
         setContentView(R.layout.trajectory);
         viewLocations = (Button) findViewById(R.id.viewLocationsButton);
         startDateDisplay = (TextView) findViewById(R.id.startDateText);
@@ -151,11 +161,18 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         endPickDate = (Button) findViewById(R.id.trajectoryEndDatePickButton);
         endPickTime = (Button) findViewById(R.id.trajectoryEndTimeButton);
         locationIntervalSpin = (Spinner) findViewById(R.id.locationIntervalSpin);
+        intervalLayout = (RelativeLayout) findViewById(R.id.loc_pull_layout);
+        networkIntervalSpin = (Spinner) findViewById(R.id.networkIntervalSpin);
         fillSpinners();
-        ArrayAdapter<Long> locSpinAdapter = new ArrayAdapter<Long>(
+        ArrayAdapter<Long> locSpinAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item, locationIntervals);
         locSpinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         locationIntervalSpin.setAdapter(locSpinAdapter);
+
+        ArrayAdapter<Long> netSpinAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, networkIntervals);
+        netSpinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        networkIntervalSpin.setAdapter(netSpinAdapter);
 
         times = new HashMap<>();
         that = this;
@@ -177,6 +194,22 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
 
             }
         });
+
+        networkIntervalSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (bound) {
+                    myService.setNetworkInterval((long) networkIntervalSpin.getItemAtPosition(position));
+                    System.out.println(myService.getNetworkInterval());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
                 viewLocations.setOnClickListener(new View.OnClickListener() {
                     /**
                      * button to take the user to a list of their points in between two start/end times.
@@ -281,10 +314,10 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
 
         if (isMyServiceRunning(GPSService.class)) {
             theSwitch.setChecked(true);
-            locationIntervalSpin.setVisibility(View.VISIBLE);
+            intervalLayout.setVisibility(View.VISIBLE);
         } else {
             theSwitch.setChecked(false);
-            locationIntervalSpin.setVisibility(View.INVISIBLE);
+            intervalLayout.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -296,30 +329,13 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         if (on) {
             startService(serviceIntent);
             bindService(serviceIntent, mConnection, Context.BIND_NOT_FOREGROUND);
-            locationIntervalSpin.setVisibility(View.VISIBLE);
+            intervalLayout.setVisibility(View.VISIBLE);
             // Toggled off?
         } else {
             stopService(serviceIntent);
-            locationIntervalSpin.setVisibility(View.INVISIBLE);
+            intervalLayout.setVisibility(View.INVISIBLE);
         }
     }
-
-
-
-   /* @Override
-    protected void onStart() {
-        super.onStart();
-        sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        ToggleButton theSwitch = (ToggleButton) findViewById(R.id.switchGPS);
-
-        if (isMyServiceRunning(GPSService.class)) {
-            System.out.println("SET TO CHECKED!!!");
-            theSwitch.setChecked(true);
-        } else {
-            theSwitch.setChecked(false);
-        }
-
-    } */
 
     @Override
     protected void onStop() {
@@ -421,8 +437,12 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
 
     private void fillSpinners() {
         locationIntervals = new ArrayList<>();
+        networkIntervals = new ArrayList<>();
         for (int i = 10; i <= 300; i += 5) {
             locationIntervals.add((long) i);
+        }
+        for (int i = 60; i <= 300; i += 30) {
+            networkIntervals.add((long) i);
         }
     }
 

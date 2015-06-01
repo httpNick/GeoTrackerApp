@@ -35,11 +35,38 @@
         android:textOn="Tracking off"
         android:textOff="Tracking on"
         android:onClick="onToggleClicked"/>
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loc_pull_layout"
+        android:padding="10dip">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/locationIntervalSpinText"
+        android:text="Location pulling interval (seconds): "
+        android:textColor="@android:color/white"/>
     <Spinner
         android:id="@+id/locationIntervalSpin"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/locationIntervalSpinText"
+        android:background="@android:color/holo_red_light"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/networkIntervalSpinText"
+        android:layout_below="@id/locationIntervalSpinText"
+        android:text="Network pulling interval (minutes): "
+        android:textColor="@android:color/white"/>
+    <Spinner
+        android:id="@+id/networkIntervalSpin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/locationIntervalSpin"
+        android:layout_toRightOf="@id/networkIntervalSpinText"
+        android:background="@android:color/holo_red_light"/>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/startView"

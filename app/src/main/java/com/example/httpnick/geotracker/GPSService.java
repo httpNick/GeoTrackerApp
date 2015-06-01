@@ -45,7 +45,7 @@ public class GPSService extends Service {
     /** Interval to pull locations and place into local sqlite DB*/
     private long LOCATION_INTERVAL = 10000; //10 seconds
     /** Interval to push local sqlite DB contents to the web service. */
-    private long PUSH_NETWORK_INTERVAL = 60000;
+    private long PUSH_NETWORK_INTERVAL = 600000; //60mins
     /** Distance in which to look for a change.*/
     private static final int LOCATION_DISTANCE = 0;
     /** Reference to the sqlite db helper for this app*/
@@ -214,6 +214,21 @@ public class GPSService extends Service {
     /**-------------------- Getters and setters --------------------------------------------*/
     public void setLocalInterval(long newInterval) {
         LOCATION_INTERVAL = newInterval * 1000;
+        resetService();
+    }
+    public long getLocalInterval() {
+        return LOCATION_INTERVAL;
+    }
+
+    public void setNetworkInterval(long newInterval) {
+        PUSH_NETWORK_INTERVAL = newInterval * 10000;
+        resetService();
+    }
+    public long getNetworkInterval() {
+        return PUSH_NETWORK_INTERVAL;
+    }
+
+    private void resetService() {
         if (mLocationManager != null) {
             for (int i = 0; i < mLocationListeners.length; i++) {
                 try {
@@ -233,16 +248,6 @@ public class GPSService extends Service {
             }
         }
         setup();
-    }
-    public long getLocalInterval() {
-        return LOCATION_INTERVAL;
-    }
-
-    public void setNetworkInterval(long newInterval) {
-        PUSH_NETWORK_INTERVAL = newInterval;
-        timer.cancel();
-        timer.purge();
-        //timer.schedule(doAsynchronousTask, 0, PUSH_NETWORK_INTERVAL);
     }
 
     /**
