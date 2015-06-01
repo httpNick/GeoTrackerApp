@@ -315,6 +315,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         if (isMyServiceRunning(GPSService.class)) {
             theSwitch.setChecked(true);
             intervalLayout.setVisibility(View.VISIBLE);
+            bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
         } else {
             theSwitch.setChecked(false);
             intervalLayout.setVisibility(View.INVISIBLE);
@@ -328,11 +329,12 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         // Toggled on?
         if (on) {
             startService(serviceIntent);
-            bindService(serviceIntent, mConnection, Context.BIND_NOT_FOREGROUND);
+            bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
             intervalLayout.setVisibility(View.VISIBLE);
             // Toggled off?
         } else {
             stopService(serviceIntent);
+            unbindService(mConnection);
             intervalLayout.setVisibility(View.INVISIBLE);
         }
     }
