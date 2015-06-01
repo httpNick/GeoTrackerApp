@@ -5,16 +5,20 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
@@ -29,41 +33,104 @@ import java.util.HashMap;
  * A button is also available to manually push data to the web service.
  * @author Nick Duncan
  */
-public class Trajectory extends FragmentActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener{
-    /** Reference to the location tracking service */
+public class Trajectory extends FragmentActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+    /**
+     * Reference to the location tracking service
+     */
     Intent serviceIntent;
-    /** Bundle to be sent to other activities with start/end points saved */
+    /**
+     * Bundle to be sent to other activities with start/end points saved
+     */
     Bundle b;
-    /** Reference to the SharedPreferences for this app */
+    /**
+     * Reference to the SharedPreferences for this app
+     */
     SharedPreferences sp;
-    /** A map to hold start/end times for each TextView. */
+    /**
+     * A map to hold start/end times for each TextView.
+     */
     private HashMap<TextView, int[]> times;
-    /** View location button */
+    /**
+     * View location button
+     */
     private Button viewLocations;
-    /** display map button*/
+    /**
+     * display map button
+     */
     private Button displayMap;
-    /** Text view for the start date */
+    /**
+     * Text view for the start date
+     */
     private TextView startDateDisplay;
-    /** Text view for the start time */
+    /**
+     * Text view for the start time
+     */
     private TextView startTimeDisplay;
-    /** Button to open a start date picker */
+    /**
+     * Button to open a start date picker
+     */
     private Button startPickDate;
-    /** Button to open a start time picker */
+    /**
+     * Button to open a start time picker
+     */
     private Button startPickTime;
-    /** Text view for the end date */
+    /**
+     * Text view for the end date
+     */
     private TextView endDateDisplay;
-    /** Text view for the end time */
+    /**
+     * Text view for the end time
+     */
     private TextView endTimeDisplay;
-    /** Button to open a end date picker */
+    /**
+     * Button to open a end date picker
+     */
     private Button endPickDate;
-    /** Button to open a end time picker */
+    /**
+     * Button to open a end time picker
+     */
     private Button endPickTime;
-    /** Reference to most active date text view */
+    /**
+     * Reference to most active date text view
+     */
     private TextView activeDateDisplay;
-    /** Reference to most active time text view */
+    /**
+     * Reference to most active time text view
+     */
     private TextView activeTimeDisplay;
-    /** Reference to this for private inner class */
+    /**
+     * Reference to this for private inner class
+     */
     private FragmentActivity that;
+    /** Reference to location rate edit text*/
+    private EditText locationRate;
+    /** Reference to location rate edit text change button*/
+    private Button locationRateButton;
+    /**
+     * GPSService
+     */
+    GPSService myService;
+    boolean bound = false;
+
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            GPSService.LocalBinder binder = (GPSService.LocalBinder) service;
+            Trajectory.this.myService = binder.getService();
+            bound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            bound = false;
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,10 +146,23 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         endTimeDisplay = (TextView) findViewById(R.id.endTimeText);
         endPickDate = (Button) findViewById(R.id.trajectoryEndDatePickButton);
         endPickTime = (Button) findViewById(R.id.trajectoryEndTimeButton);
+        locationRate = (EditText) findViewById(R.id.locationRate);
+        locationRateButton = (Button) findViewById(R.id.changeLocationRate);
 
         times = new HashMap<>();
         that = this;
         b = new Bundle();
+
+        serviceIntent = new Intent(this, GPSService.class);
+        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
+
+        locationRateButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String s = locationRate.toString();
+                myService.setLocalInterval(Long.getLong(s));
+                System.out.println("SET TO " + Long.getLong(s));
+            }
+        });
 
         viewLocations.setOnClickListener(new View.OnClickListener() {
             /**
@@ -92,7 +172,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
             public void onClick(View v) {
                 // Ensure all text views are filled.
                 // NEEDED TO BE ADDED: CHECK TO MAKE START DATE IS LESS THAN END DATE!!
-                if(startDateDisplay.getText().length() > 0 &&
+                if (startDateDisplay.getText().length() > 0 &&
                         startTimeDisplay.getText().length() > 0 &&
                         endDateDisplay.getText().length() > 0 &&
                         endTimeDisplay.getText().length() > 0) {
@@ -156,7 +236,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
 
         displayMap.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(startDateDisplay.getText().length() > 0 &&
+                if (startDateDisplay.getText().length() > 0 &&
                         startTimeDisplay.getText().length() > 0 &&
                         endDateDisplay.getText().length() > 0 &&
                         endTimeDisplay.getText().length() > 0) {
@@ -183,9 +263,6 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
                 }
             }
         });
-
-        serviceIntent = new Intent(this, GPSService.class);
-
     }
 
 
@@ -201,6 +278,8 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
         }
     }
 
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -215,6 +294,14 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
 
     }
 
+    @Override
+    protected  void onStop() {
+        super.onStop();
+        if(bound) {
+            unbindService(mConnection);
+            bound = false;
+        }
+    }
     /**
      * Checks to see if a service is currently running on the device.
      * @param serviceClass class of the service you want to check.

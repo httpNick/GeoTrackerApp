@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -42,9 +43,9 @@ public class GPSService extends Service {
     /** LocationManager to manage location functionality.*/
     private LocationManager mLocationManager;
     /** Interval to pull locations and place into local sqlite DB*/
-    private static final int LOCATION_INTERVAL = 6000; //6 seconds
+    private long LOCATION_INTERVAL = 6000; //6 seconds
     /** Interval to push local sqlite DB contents to the web service. */
-    private static final long PUSH_NETWORK_INTERVAL = 60000;
+    private long PUSH_NETWORK_INTERVAL = 60000;
     /** Distance in which to look for a change.*/
     private static final int LOCATION_DISTANCE = 0;
     /** Reference to the sqlite db helper for this app*/
@@ -53,6 +54,30 @@ public class GPSService extends Service {
     private LocalBroadcastManager broadcastManager;
     /** URL to be used to push data to web service*/
     private String DB_URL;
+
+    Timer timer;
+
+    Handler handler;
+
+    /** Binder */
+    private final IBinder mBinder = new LocalBinder();
+
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class LocalBinder extends Binder {
+        public GPSService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return GPSService.this;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
 
     /**
      * Private inner class to manage location events.
@@ -113,16 +138,6 @@ public class GPSService extends Service {
             new LocationListener(LocationManager.NETWORK_PROVIDER)};
 
     /**
-     * Testing method that always returns null
-     * @param arg0
-     * @return null returns
-     */
-    @Override
-    public IBinder onBind(Intent arg0) {
-        return null;
-    }
-
-    /**
      *
      * @param intent the inent used
      * @param flags flags being passed
@@ -161,54 +176,9 @@ public class GPSService extends Service {
             mLocationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
                     mLocationListeners[0]);
-            final Handler handler = new Handler();
+            handler = new Handler();
             // Timer to be used to send off data to web service at given interval.
-            Timer timer = new Timer();
-            TimerTask doAsynchronousTask = new TimerTask() {
-                @Override
-                public void run() {
-                    handler.post(new Runnable() {
-                        @SuppressWarnings("unchecked")
-                        public void run() {
-                            try {
-                                // Cursor reference to the query made on the local db.
-                                Cursor cursor = db.queryLocation();
-                                int i = 0;
-                                cursor.moveToFirst();
-                                /** Loop logic:
-                                 *  - for each row returned by the query:
-                                 *          - Save data into a LocationPackage object
-                                 *          - Formulate the web service URL based off the data
-                                 *          - Execute web task
-                                 *          - Move to the next row with the cursor
-                                 *          - Clear the local db*/
-                                while (!cursor.isAfterLast()) {
-                                    LocationPackage lp = new LocationPackage(cursor.getString(1),
-                                            cursor.getFloat(2),
-                                            cursor.getDouble(3),
-                                            cursor.getDouble(4),
-                                            cursor.getFloat(5),
-                                            cursor.getLong(6));
-                                    DB_URL = "http://450.atwebpages.com/logAdd.php?lat="+Math.round((double) lp.latitude*10)/10+
-                                            "&lon="+Math.round((double) lp.longitude*10)/10+"&speed="+lp.speed+
-                                            "&heading="+Math.round((float) lp.heading*10)/10+"&timestamp="+lp.time+
-                                            "&source=" + lp.id;
-                                    DownloadWebPageTask task = new DownloadWebPageTask();
-                                    task.execute(new String[]{DB_URL});
-                                    //sendResult(array[i].toString());
-                                    i++;
-                                    cursor.moveToNext();
-                                    System.out.println("PUSHED TO THE NETWORK!!!");
-                                    db.clearDatabase();
-                                }
-                            }
-                            catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }
-            };
+            timer = new Timer();
             timer.schedule(doAsynchronousTask, 0, PUSH_NETWORK_INTERVAL);
         } catch (java.lang.SecurityException ex) {
             Log.i(TAG, "fail to request location update, ignore", ex);
@@ -217,18 +187,51 @@ public class GPSService extends Service {
         }
     }
 
-    /**
-     *
-     * @param message The message that will be broadcasted and stored
-     * @param message
-     */
-    public void sendResult(String message) {
-        Intent intent = new Intent("Result");
-        if (message != null)
-            intent.putExtra("Message", message);
-        broadcastManager.sendBroadcast(intent);
-    }
-
+    TimerTask doAsynchronousTask = new TimerTask() {
+        @Override
+        public void run() {
+            handler.post(new Runnable() {
+                @SuppressWarnings("unchecked")
+                public void run() {
+                    try {
+                        // Cursor reference to the query made on the local db.
+                        Cursor cursor = db.queryLocation();
+                        int i = 0;
+                        cursor.moveToFirst();
+                        /** Loop logic:
+                         *  - for each row returned by the query:
+                         *          - Save data into a LocationPackage object
+                         *          - Formulate the web service URL based off the data
+                         *          - Execute web task
+                         *          - Move to the next row with the cursor
+                         *          - Clear the local db*/
+                        while (!cursor.isAfterLast()) {
+                            LocationPackage lp = new LocationPackage(cursor.getString(1),
+                                    cursor.getFloat(2),
+                                    cursor.getDouble(3),
+                                    cursor.getDouble(4),
+                                    cursor.getFloat(5),
+                                    cursor.getLong(6));
+                            DB_URL = "http://450.atwebpages.com/logAdd.php?lat="+Math.round((double) lp.latitude*10)/10+
+                                    "&lon="+Math.round((double) lp.longitude*10)/10+"&speed="+lp.speed+
+                                    "&heading="+Math.round((float) lp.heading*10)/10+"&timestamp="+lp.time+
+                                    "&source=" + lp.id;
+                            DownloadWebPageTask task = new DownloadWebPageTask();
+                            task.execute(new String[]{DB_URL});
+                            //sendResult(array[i].toString());
+                            i++;
+                            cursor.moveToNext();
+                            System.out.println("PUSHED TO THE NETWORK!!!");
+                            db.clearDatabase();
+                        }
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    };
     /**
      * Removes the location listeners
      */
@@ -256,6 +259,47 @@ public class GPSService extends Service {
         }
     }
 
+    /**-------------------- Getters and setters --------------------------------------------*/
+    public void setLocalInterval(long newInterval) {
+        LOCATION_INTERVAL = newInterval;
+        if (mLocationManager != null) {
+            for (int i = 0; i < mLocationListeners.length; i++) {
+                try {
+                    mLocationManager.removeUpdates(mLocationListeners[i]);
+                } catch (Exception ex) {
+                    Log.i(TAG, "fail to remove location listeners, ignore", ex);
+                }
+            }
+        }
+        initializeLocationManager();
+        try {
+            // start to request location updates to grab (provided by the network).
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    mLocationListeners[1]);
+        } catch (java.lang.SecurityException ex) {
+            Log.i(TAG, "fail to request location update, ignore", ex);
+        } catch (IllegalArgumentException ex) {
+            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
+        }
+        try {
+            // start to request location updates to grab (provided by GPS).
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    mLocationListeners[0]);
+        } catch (java.lang.SecurityException ex) {
+            Log.i(TAG, "fail to request location update, ignore", ex);
+        } catch (IllegalArgumentException ex) {
+            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
+        }
+    }
+
+    public void setNetworkInterval(long newInterval) {
+        PUSH_NETWORK_INTERVAL = newInterval;
+        timer.cancel();
+        timer.purge();
+        timer.schedule(doAsynchronousTask, 0, PUSH_NETWORK_INTERVAL);
+    }
     /**
      * Running the loading of the JSON in a separate thread.
      * Code adapted from http://www.vogella.com/tutorials/AndroidBackgroundProcessing/article.html
