@@ -51,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/locationIntervalSpinText"
-        android:background="@android:color/holo_red_light"/>
+        android:background="@android:color/background_light" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -65,14 +65,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/locationIntervalSpin"
         android:layout_toRightOf="@id/networkIntervalSpinText"
-        android:background="@android:color/holo_red_light"/>
+        android:background="@android:color/background_light" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/startView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
+        android:background="#00ffffff"
         android:orientation="vertical"
         android:padding="10dip" >
 
@@ -82,14 +82,17 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:textColor="@android:color/white" />
+        android:textColor="#ff000000"
+        android:textSize="12dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:textColor="@android:color/white"
-        android:text="Set start time/date: "/>
+        android:textColor="#000000"
+        android:text="Set start time/date: "
+        android:textSize="15dp"
+        android:textStyle="bold" />
     <Button
         android:id="@+id/trajectoryDatePickButton"
         android:layout_width="wrap_content"
@@ -103,7 +106,7 @@
         android:id="@+id/startDateView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
+        android:background="#00ffffff"
         android:orientation="vertical"
         android:padding="10dip" >
 
@@ -113,7 +116,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:textColor="@android:color/white" />
+        android:textColor="#000000"
+        android:textSize="12dp" />
     <Button
         android:id="@+id/trajectoryTimeButton"
         android:layout_width="wrap_content"
@@ -128,7 +132,7 @@
         android:id="@+id/endView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
+        android:background="#00ffffff"
         android:orientation="vertical"
         android:padding="10dip" >
 
@@ -138,14 +142,16 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:textColor="@android:color/white" />
+            android:textColor="#000000" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:textColor="@android:color/white"
-            android:text="Set end time/date: "/>
+            android:textColor="#000000"
+            android:text="Set end time/date: "
+            android:textSize="15dp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/trajectoryEndDatePickButton"
@@ -160,7 +166,7 @@
         android:id="@+id/endDateView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
+        android:background="#00ffffff"
         android:orientation="vertical"
         android:padding="10dip" >
 
@@ -170,7 +176,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:textColor="@android:color/white" />
+            android:textColor="#000000" />
         <Button
             android:id="@+id/trajectoryEndTimeButton"
             android:layout_width="wrap_content"
