@@ -7,6 +7,7 @@ import java.util.TimeZone;
 /**
  * @class LocationPackage class used as an object representation of a user location data
  * @author Nick Duncan
+ * @author Jon Sobocinski
  */
 public class LocationPackage {
     String id;
@@ -34,7 +35,6 @@ public class LocationPackage {
         this.latitude = latitude;
         this.speed = speed;
         this.time = time;
-
     }
 
     public LocationPackage(String heading, String longitude, String latitude,
@@ -45,6 +45,17 @@ public class LocationPackage {
         this.latitude = latitude;
         this.speed = speed;
         this.time = time;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this.latitude.equals(((LocationPackage) o).latitude)
+                && this.longitude.equals(((LocationPackage) o).longitude)){
+            return true;
+        }else {
+            return false;
+        }
+
     }
 
     /**
