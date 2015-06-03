@@ -24,5 +24,6 @@ public class JUnitTesting extends InstrumentationTestCase {
 
         Assert.assertTrue("Testing equals method", locationPackage.equals(locationPackage));
 
+
     }
 }
