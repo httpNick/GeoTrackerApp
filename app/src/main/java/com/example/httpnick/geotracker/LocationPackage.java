@@ -10,12 +10,12 @@ import java.util.TimeZone;
  * @author Jon Sobocinski
  */
 public class LocationPackage {
-    String id;
-    Object heading;
-    Object longitude;
-    Object latitude;
-    Object speed;
-    Object time;
+    public String id;
+    public Object heading;
+    public Object longitude;
+    public Object latitude;
+    public Object speed;
+    public Object time;
 
 
     /**
