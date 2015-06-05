@@ -32,8 +32,8 @@
         android:id="@+id/switchGPS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textOn="Tracking off"
-        android:textOff="Tracking on"
+        android:textOn="Tracking on"
+        android:textOff="Tracking off"
         android:onClick="onToggleClicked"/>
     <RelativeLayout
         android:layout_width="match_parent"

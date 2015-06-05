@@ -343,7 +343,7 @@ public class Trajectory extends FragmentActivity implements DatePickerDialog.OnD
     protected void onStop() {
         super.onStop();
         if(bound) {
-            unbindService(mConnection);
+            //unbindService(mConnection);
             bound = false;
         }
     }
